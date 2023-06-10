@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{{ system_title }}</title>
+    <!-- MDB icon -->
+    <link rel="shortcut icon" href="{{ asset('assets/favicon.png') }}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('assets/fonts/fontawesome/fontawesome.css') }}">
+    <!-- Bootstrap core CSS -->
+    <link href="{{ asset('assets/mdb4pro/css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{{ asset('assets/mdb4pro/css/mdb.min.css') }}" rel="stylesheet">
+    <!-- Custom Design -->
+    <link href="{{ asset('assets/mdb4pro/css/styles-login.css') }}" rel="stylesheet">
+</head>
+
+<body style="overflow: hidden;">
+{% if miEmpresa.wallpaper is defined %}
+    <img id="wallpaper" src="{{ asset('images/') }}{{ miEmpresa.wallpaper }}">
+{% endif %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-6 mb-5 mt-md-0 mt-5 text-center text-md-left text-primary">
+            <h1 class="h1-responsive font-weight-bold wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-name: fadeInLeft; animation-delay: 0.3s;">
+                {{ system_siglas }}
+            </h1>
+            <hr class="hr-light wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-name: fadeInLeft; animation-delay: 0.3s;">
+            <h6 class="mb-3 wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-name: fadeInLeft; animation-delay: 0.3s;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem repellendus quasi fuga
+                nesciunt dolorum nulla magnam veniam sapiente, fugiat! Commodi sequi non animi ea
+                dolor molestiae, quisquam iste, maiores. Nulla.</h6>
+        </div>
+        <div class="container-login col-md-6 col-xl-5 mb-4">
+            <!-- Material form login -->
+            <div class="card wow fadeInRight animated" data-wow-delay="0.3s" style="visibility: visible; animation-name: fadeInRight; animation-delay: 0.3s;">
+                <h5 class="card-header primary-color white-text text-center py-4">
+                    <strong>{{ system_title }}</strong>
+                </h5>
+                <!--Card content-->
+                <div class="card-body px-lg-5 pt-0">
+                    <!-- Form -->
+                    <form class="text-center" style="color: #757575;" method="post">
+                        <!-- Email -->
+                        <div class="md-form">
+                            <input type="text" name="_username" id="materialLoginFormEmail" class="form-control">
+                            <label for="materialLoginFormEmail">Usuario</label>
+                        </div>
+                        <!-- Password -->
+                        <div class="md-form">
+                            <input type="password" name="_password" id="materialLoginFormPassword" class="form-control">
+                            <label for="materialLoginFormPassword">Contraseña</label>
+                        </div>
+                        <!-- Subject -->
+                        <span>Dominio</span>
+                        <select name="_domain" class="mdb-select">
+                            <option class="indigo-text" value="local">Local</option>
+                            {% for l in ldap_servers %}
+                                <option class="indigo-text" value="{{ l.id }}">{{ l.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="hidden" name="_csrf_token"
+                               value="{{ csrf_token('authenticate') }}"
+                        >
+                        <!-- Sign in button -->
+                        <button class="btn btn-outline-primary btn-rounded btn-block my-4 waves-effect z-depth-0" type="submit">Iniciar sesión</button>
+                    </form>
+                    <!-- Form -->
+                </div>
+            </div>
+            <!-- Material form login -->
+        </div>
+    </div>
+</div>
+<!--  SCRIPTS  -->
+<!-- JQuery -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/jquery.js') }}"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/popper.min.js') }}"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/bootstrap.min.js') }}"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/mdb.min.js') }}"></script>
+<!-- Document ready -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/mdb.document.login.ready.js') }}"></script>
+<script>
+    new WOW().init();
+
+</script>
+</body>
+
+</html>

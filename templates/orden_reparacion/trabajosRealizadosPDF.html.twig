@@ -1,0 +1,33 @@
+{% extends 'assets_views/pdfTemplate.html.twig'  %}
+
+{% set title = 'Reporte de trabajos realizados' %}
+
+{% block document %}
+        <table id="datos-multi-select-all" class="table table-xs">
+            <thead>
+                <tr>
+                    <th>Fecha de revisión</th>
+                    <th>Orden de trabajo</th>
+                    <th>Estado Final</th>
+                    <th>Ingreso</th>
+                    <th>Materiales usados</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for orden_reparacion in orden_reparacions %}
+                <tr>
+                    <td>{{ orden_reparacion.created ? orden_reparacion.created|date('d/m/Y h:i:s a') : '' }}</td>
+                    <td>{{ orden_reparacion.ordenTrabajo.nroOrden }}</td>
+                    <td>{% if orden_reparacion.estadoFinal == 'R' %}
+                            <span class="glyphicon glyphicon-ok text-success"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove text-danger"></span>
+                        {% endif %}
+                    </td>
+                    <td class="text-right">$ {{ orden_reparacion.ingreso | number_format(2,'.',' ') }}</td>
+                    <td>{{ orden_reparacion.materialesUsados }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+{% endblock %}

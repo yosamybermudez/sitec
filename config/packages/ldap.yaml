@@ -1,0 +1,18 @@
+parameters:
+  riper.security.active_directory.settings:
+    account_suffix : example.com # without the @ at the beginning
+    base_dn : dc=example,dc=com #The DN of the domain
+   # domain_controllers : [ baudrive.kim.riper.fr ] #Servers to use for ldap connection (Random)
+    admin_username: uid=admin,ou=system #Null to use the userConnection
+    admin_password: secret #Null to use the userConnection
+    keep_password_in_token: false #Set to true if you want to re-use the adldap instance to make further queries (This is a security issue because the password is kept in session)
+    real_primarygroup : true #For Linux compatibility.
+    use_ssl : false #Set it true need configuration of the server to be useful
+    use_tls : false #Set it true need configuration of the server to be useful
+    recursive_grouproles: false #recursive group roles
+    username_validation_pattern: /^[a-z0-9-.]+$/i #Regex that check the final username value (extracted from patterns below). Must be compliant with your Active Directory username policy.
+    username_patterns: #username is extracted from the string the user put into the login form
+      - /([^@]*)@example.com/i  # like toto@riper.fr
+      - /EXAMPLE\\(.*)/i #like EXAMPLE\toto
+      - /EXAMPLE.COM\\(.*)/i #like EXAMPLE.COM\toto
+      - /(.*)/i #like toto

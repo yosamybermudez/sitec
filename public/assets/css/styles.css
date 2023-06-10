@@ -1,0 +1,596 @@
+@font-face {
+    font-family: 'RobotoFont';
+    src: url('../fonts/Roboto-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+*{
+    font-family: RobotoFont;
+}
+
+/*th.opciones{*/
+/*    width: 110px!important;*/
+/*}*/
+
+.no-visible{
+    display: none;
+}
+
+.bold{
+    font-weight: bold;
+}
+
+.flash-alerts-content{
+    width: 40%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 900;
+    margin-top: 15px;
+}
+
+
+#content #module-title{
+    border-bottom: 2px solid #ddd;
+    padding: 10px 0;
+    overflow: hidden;
+}
+
+#content #page-title{
+    /*border-bottom: 2px solid #ddd;*/
+    padding: 10px 0;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+#content #page-title h1{
+    margin: 0px!important;
+}
+
+#content #page-subtitle{
+    margin-top: 10px;
+}
+
+.btn{
+    margin-left: 5px;
+}
+
+.actions{
+    list-style: none;
+}
+
+.action-btn{
+    padding: 4px;
+    margin: 2px;
+    border-radius: 5px;
+}
+
+.show-btn{
+    background-color: rgb(60, 141, 188);
+    color: #fff;
+}
+
+.delete-btn{
+    background-color: rgb(245, 105, 84);
+    color: #fff;
+}
+
+.edit-btn{
+    background-color: #9d9d9d;
+    color: #fff;
+}
+
+.img-trabajador{
+    margin-right: 10px;
+    margin-bottom: 10px;
+    float: left;
+}
+
+#trabajador-subtitle{
+    border-bottom: 2px solid #ddd;
+}
+
+#trabajador-subtitle > p,
+#trabajador-info > p,
+h5 > div > label,
+h5 > div > p:not(.help-text),
+.table-form th,
+form label{
+    text-transform: uppercase;
+    color: #9d9d9d;
+    font-weight: bold;
+    font-size: medium;
+    padding: 5px 0;
+}
+
+
+.trabajador-nombre{
+    margin: 0;
+    margin-top: 10px;
+}
+
+.trabajador-cargo{
+    font-style: italic;
+    color: dimgray;
+    margin-bottom: 0;
+}
+
+.bold{
+    font-weight: bold;
+}
+
+.table-image{
+    width: 25px;
+}
+table ul{
+    padding-left: 0;
+}
+
+#datos_wrapper{
+    margin-top: 25px;
+}
+
+#photo-wrapper{
+    width: 140px;
+    height: 140px;
+}
+
+div.edit-photo{
+    height: 30px;
+    width: 140px;
+    background-color: rgba(0,0,0, 0.5);
+    position: absolute;
+    top: 110px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    visibility: hidden;
+}
+
+#profile-photo:hover + div.edit-photo, div.edit-photo:hover{
+    visibility: visible;
+}
+
+/*.inputfile{*/
+/*    width: 0.1px;*/
+/*    height: 0.1px;*/
+/*    opacity: 0;*/
+/*    overflow: hidden;*/
+/*    position: absolute;*/
+/*    z-index: -1;*/
+/*}*/
+
+/*#edit-photo{*/
+/*    color: white;*/
+/*    float: right;*/
+/*    padding: 7px;*/
+/*    margin-bottom: 0;*/
+/*    cursor: pointer;*/
+/*}*/
+.cursiva{
+    font-style: italic;
+}
+
+#empresa-front-logo{
+    width: 300px;
+    margin: 0px auto;
+    padding: 20px;
+}
+
+#empresa-front-logo img{
+    width: 100%;
+}
+
+.principal{
+    height: 100px;
+    background-color: #2e6da4;
+    color: white;
+    border-radius: 10px;
+
+}
+
+.principal > *{
+    width: 100%;
+    text-align: center;
+}
+
+.principal > h3{
+    margin: 10px 0 5px 0;
+}
+
+.principal > h4{
+    margin: 0;
+}
+
+a{
+    cursor: pointer;
+    color: #000;
+}
+
+a.modulo{
+    color: #fff!important;
+}
+
+a:hover{
+    /*//color: #fff;*/
+    color: #2e6da4;
+}
+
+#modulos {}
+
+#modulos a.modulo{
+     margin: 5px;
+}
+
+#modulos a.modulo > img{
+    text-align: center;
+    position: relative;
+    height: 41%;
+    filter: brightness(0.5) sepia(1) hue-rotate(140deg) saturate(6) invert(100%);
+    display:block;
+    margin: 8px auto 4px auto;
+}
+
+
+
+#modulos a.modulo:hover{
+    opacity: 0.7;
+}
+
+.modulo h1, .modulo h3{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.modulo h1{
+    margin-top: 7px;
+}
+
+.modulo .modulo-enlace{
+    height: 42px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+
+.form-error{
+    font-weight: normal;
+    color: #d9534f;
+    font-size: 70%;
+    font-style: italic;
+    text-transform: none;
+}
+
+.help-text{
+    position: relative;
+    left: 10px;
+    top: 5px;
+    font-weight: normal;
+    color: #337ab7;
+    font-size: 70%;
+    font-style: italic;
+    text-transform: none;
+}
+
+.sad{
+    float: left;
+    width: 18px;
+    height: 18px;
+    background: url("../zondicons/mood-sad-outline.svg") no-repeat;
+    background-size: cover;
+    margin-right: 10px;
+}
+
+.cell-icon{
+    width: 15px;
+}
+
+.navbar{
+    margin-bottom: 0!important;
+    margin-bottom: 0!important;
+}
+
+#content-area{
+    padding-top: 20px;
+}
+
+table ul{
+    list-style: none;
+}
+
+/*SWITCHER*/
+.onoffswitch {
+    position: relative; width: 90px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 20px;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.2s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "✓";
+    padding-left: 10px;
+    background-color: #34A7C1; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "✕";
+    padding-right: 10px;
+    background-color: #EEEEEE; color: #999999;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 50px; margin: 6px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 28px;
+    border: 2px solid #999999; border-radius: 20px;
+    transition: all 0.2s ease-in 0s;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
+
+/* otro slider */
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #337ab7;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+#password-input ul{
+    list-style: none;
+    color: red;
+    font-style: italic;
+    font-size: 12px;
+    position: absolute;
+    width: 246px;
+    padding-left: 6px;
+    padding-top: 3px;
+}
+
+.required::after{
+    content: " *";
+    color: red;
+}
+
+.numberformat{
+    text-align: right;
+}
+
+.margin-right-bottom{
+    margin: 0 15px 15px 0;
+}
+
+.underline{
+    text-decoration: underline;
+}
+
+#medida_estado h1{
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;
+    width: 200px;
+    padding: 10px;
+    margin: 40px auto;
+}
+
+#medida_vencida{
+    color: red;
+    border: 3px solid red;
+}
+
+#medida_vigente{
+    color: forestgreen;
+    border: 3px solid forestgreen;
+}
+
+.file-button{
+    opacity:0;position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;
+}
+
+#upload-file-info:empty{
+    display: none;
+}
+
+.no-border{
+    border: none!important;
+}
+
+.small-subtitle{
+    position: absolute;
+    top: -15px;
+    left: 17px;
+}
+
+/* CSS Slider */
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: block;
+    width: 60px;
+    height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(24px);
+    -ms-transform: translateX(24px);
+    transform: translateX(24px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Semi-rounded sliders */
+.slider.semi-round {
+    border-radius: 4px;
+}
+
+.slider.semi-round:before {
+    border-radius: 15%;
+}
+
+.dataTables_filter{
+    float: right!important;
+}
+
+.list-group > li{
+    overflow: hidden;
+}
+
+.border-bottom{
+    border-bottom: 2px solid #e7e7e7;
+    overflow: hidden;
+}
+
+label + ul{
+    list-style: none;
+    color: red;
+    font-style: italic;
+    font-size: 11px;
+    position: absolute;
+    /*margin-left: 170px;*/
+    margin-top: 35px;
+}
+
+ul + input{
+    border-color: red!important;
+}
+
+.alert-input{
+    padding: 8px;
+    position: relative;
+    top: 2px;
+}
+
+img#profile-photo + div{
+    position: relative;
+}
+
+li.alert-item{
+    padding: 10px;
+}
+
+.modal-footer .btn{
+    float: right;
+}
+
+table th.border-bottom-th{
+    border-bottom: 2px solid #dee2e6;
+}

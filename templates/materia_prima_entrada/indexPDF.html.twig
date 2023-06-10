@@ -1,0 +1,50 @@
+{% extends 'assets_views/document.html.twig' %}
+
+{% set footer = 'Servicios Integrales Tecnológicos – Esquina de Tejas entre 10 de octubre y San Joaquín – Teléfono: 78795048' %}
+
+{% block document %}
+    <table class="table table-xs">
+        <thead>
+        <tr>
+            <th colspan="5">
+                <table class="table-bordered" style="background-color: white; table-layout: fixed; width: 100%;">
+                    <tr>
+                        <td rowspan="3" colspan="1" class="p-3 pb-0">
+                            <img src="{{ app.request.schemeAndHttpHost }}{{ asset('assets/institucional/sitec-logo-horizontal.jpg') }}" style="width: 100%;">
+                        </td>
+                        <td rowspan="3" colspan="4" class="text-blue-sitec p-3 pb-0" style="font-weight: bold; text-transform: uppercase; font-size: 20px; text-align: center;">
+                            <h3>Entradas de materias primas. Fecha: {{ fecha }} </h3>
+                        </td>
+                    </tr>
+                </table>
+                <div class="text-center p-1 institucional-text"><small>{{ footer }}</small></div>
+            </th>
+        </tr>
+
+        <tr>
+            <th>Fecha</th>
+            <th>Nro. Movimiento</th>
+            <th>Realizada por</th>
+            <th>Cantidad de materias primas</th>
+            <th>Importe total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for materia_prima_entrada in materia_prima_entradas %}
+            <tr>
+                <td class="no-wrap">{{ materia_prima_entrada.created | date('Y-m-d h:i:s a') }}</td>
+                <td>{{ materia_prima_entrada.movimientosMateriaPrima[0].nroMovimiento }}</td>
+                <td>{{ materia_prima_entrada.realizadaPor.nombreCompleto }}</td>
+                <td class="text-center">{{ materia_prima_entrada.movimientosMateriaPrima | length }}</td>
+                <td class="text-right no-wrap">$ {{ materia_prima_entrada.importeTotal | number_format(2,'.',' ') }}</td>
+            </tr>
+        {% endfor %}
+            <tr>
+                <td colspan="3" class="text-right bold">Totales</td>
+                <td class="text-center bold">{{ cantidades }}</td>
+                <td class="text-right bold">$ {{ gasto | number_format(2,'.',' ') }}</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,49 @@
+<nav class="mb-1 navbar navbar-expand-lg navbar-dark primary-color">
+  <!-- SideNav slide-out button -->
+  <button data-activates="slide-out" class="btn-sidenav button-collapse navbar-toggler" style="{{ nav_display }}">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  {% if app.session.get('modulo') != 'all_denied' %}
+    <a class="navbar-brand" href="{{ path('app_module_index') }}">{{ system_title }}</a>
+  {% else %}
+    <span class="navbar-brand">{{ system_title }}</span>
+  {% endif %}
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-5" aria-controls="navbarSupportedContent-5" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent-5">
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <div id="fecha_hora" class="nav-link border-right pr-3 mr-3"></div>
+      </li>
+      <li class="nav-item border-right dropdown dropdown-dark pr-3 mr-3">
+        {{ render(controller('App\\Controller\\AppModuleController::notificaciones')) }}
+      </li>
+      <li class="nav-item avatar dropdown dropdown-dark">
+        <a class="nav-link dropdown-toggle waves-effect waves-light" id="navbarDropdownMenuLink-5" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <img src="
+            {% if app.user.picture is defined and app.user.picture is not null %}
+           {{ asset('uploads/fotos_trabajadores/' ~ app.user.picture ) }}
+          {% else %}
+            {{ asset('images/generic.jpg') }}
+          {% endif %}
+        " class="rounded-circle z-depth-0 mr-2" alt="avatar image">
+          <span style="top: 3px; position:relative;">{{ app.user.username }}</span>
+          <span class="fa fa-chevron-down" style="transform: scale(0.6); position: relative; top: 5px;"></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg-right institucional-bg text-white" aria-labelledby="navbarDropdownMenuLink-5">
+          {% if app.session.get('modulo') != 'all_denied' %}
+          <a class="dropdown-item waves-effect waves-light" href="{{ path('usuario_show', {'id': app.user.id }) }}">Mi perfil</a>
+          <div class="dropdown-divider"></div>
+          {% endif %}
+          {% if is_granted('ROLE_ADMINISTRADOR_NEGOCIO') %}
+          <a class="dropdown-item waves-effect waves-light"
+                  href="{{ path('sistema_clean_cache') }}"
+             onclick="return confirm('¿Está seguro de la acción a realizar?');"> Limpiar caché </a>
+          {% endif %}
+          <a class="dropdown-item waves-effect waves-light" href="{{ path('logout') }}">Cerrar sesión</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>

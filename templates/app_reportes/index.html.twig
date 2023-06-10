@@ -1,0 +1,28 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Reportes',
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <div class="row">
+        {% for enlace in enlaces %}
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6" style="margin: 10px 0;">
+                <a href="{{ enlace.enlace_directo }}">
+                    <div class="card bg-primary text-white">
+                        <div class="card-header">
+                            <img class="svg svg-invert" src="{{ asset('assets/zondicons/' ~ enlace.icon ~ '.svg') }}">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ enlace.nombre }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

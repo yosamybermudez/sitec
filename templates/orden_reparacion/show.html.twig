@@ -1,0 +1,121 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Dictamen de la Orden de Trabajo # ' ~ orden_reparacion.ordenTrabajo.nroOrden,
+        'link' : {
+            'back' : is_granted('ROLE_TECNICO') ? path('dictamen_tecnico_trabajos_pendientes') : path('jornada_show_hoy'),
+            'ops' : is_granted('ROLE_TECNICO') ? {
+                'edit' : path('orden_reparacion_edit', { 'id': orden_reparacion.id }),
+                'delete' : null
+            } : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <table class="table no-first-border table-xs">
+        <tbody>
+            <tr>
+                <th>Orden de trabajo</th>
+                <td> {{ orden_reparacion.ordenTrabajo.nroOrden }} {% if is_granted('ROLE_RECEPCIONISTA') %} <a style="float: right;" class="btn btn-primary btn-sm ml-2 waves-effect waves-effect" href="{{ path('orden_trabajo_show', {'id': orden_reparacion.ordenTrabajo.id }) }}">Ver orden </a>{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Monto ingresado ($)</th>
+                <td>$ {{ (orden_reparacion.ingreso) | number_format(2,'.',' ') }}</td>
+            </tr>
+            <tr>
+                <th>Gastos asociados ($)</th>
+                <td>$ {{ (orden_reparacion.gastoMateriales + orden_reparacion.otrosGastos) | number_format(2,'.',' ') }}</td>
+            </tr>
+            <tr>
+                <th>Materiales utilizados</th>
+                <td>
+                    {% if orden_reparacion.materialesUsados or orden_reparacion.otrosMateriales %}
+                        {% if orden_reparacion.materialesUsados %}{{ orden_reparacion.materialesUsados }} {% endif %} {% if orden_reparacion.otrosMateriales %}- Otros: {{ orden_reparacion.otrosMateriales }}{% endif %}
+                    {% else %}
+                        No se registraron materiales
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Fecha de reparación</th>
+                <td>{{ orden_reparacion.created ? orden_reparacion.created | fechahora_es : '' }}</td>
+            </tr>
+            <tr>
+                <th>Dictaminado {% if orden_reparacion.ordenTrabajo.dictamenTecnico.createdBy == orden_reparacion.createdBy and orden_reparacion.ordenTrabajo.dictamenTecnico.createdBy == orden_reparacion.ordenTrabajo.dictamenTecnico.updatedBy %} y revisado {% endif %}por</th>
+                <td>
+                    {{ orden_reparacion.ordenTrabajo.dictamenTecnico.createdBy.nombreCompleto }}
+                    {% if orden_reparacion.ordenTrabajo.dictamenTecnico.createdBy != orden_reparacion.ordenTrabajo.dictamenTecnico.updatedBy %}
+                        y {{ orden_reparacion.ordenTrabajo.dictamenTecnico.updatedBy.nombreCompleto }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% if orden_reparacion.ordenTrabajo.dictamenTecnico.createdBy != orden_reparacion.createdBy %}
+            <tr>
+                <th>Revisado por</th>
+                <td>{{ orden_reparacion.createdBy.nombreCompleto }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <th>Resultado final</th>
+                <td>{{ orden_reparacion.estadoFinal | traducirSiglas }}</td>
+            </tr>
+            <tr>
+                <th>Estado de la orden</th>
+                <td>{{ orden_reparacion.ordenTrabajo.estado | traducirSiglas }}</td>
+            </tr>
+            {% if orden_reparacion.estadoFinal == 'R' %}
+            <tr>
+                <th>Garantía</th>
+                {% set diasRestantesGarantia = date(orden_reparacion.ordenTrabajo.fechaSalida|date('Y/m/d')).diff(date("now"|date('Y/m/d'))) %}
+                <td>{% if orden_reparacion.ordenTrabajo.garantiasAsociadas|length == 0 %}
+                        {% if orden_reparacion.diasGarantia != 0 %}
+                            {{ orden_reparacion.diasGarantia }} día{{ orden_reparacion.diasGarantia == 0 or orden_reparacion.diasGarantia > 1 ? 's'}}
+                            {% if orden_reparacion.ordenTrabajo.estado == 'EAC' %}
+                                {% set diferencia = orden_reparacion.diasGarantia - diasRestantesGarantia.days %}
+                                {{ diferencia < 0 ? '<span class="text-danger ml-2">Vencida</span>' : "(días restantes: " ~ diferencia ~ ")"}}
+                            {% endif %}
+                        {% else %}
+                            Sin días de garantía
+                        {% endif %}
+                    {% else %}
+                        {% set ultimaOrden = orden_reparacion.ordenTrabajo.garantiasAsociadas[orden_reparacion.ordenTrabajo.garantiasAsociadas|length - 1] %}
+                        {% set garantiaHasta = ultimaOrden.ordenReparacion.diasGarantia is not null ? ultimaOrden.fechaSalida|date_modify("+" ~ ultimaOrden.ordenReparacion.diasGarantia ~ "day") : null %}
+                        {% if date(garantiaHasta) >= date("now") %}
+                            <div>Este equipo esta en garantía, por {{ ultimaOrden.ordenReparacion.diasGarantia ?: 0 }} día{{ ultimaOrden.ordenReparacion.diasGarantia == 0 or ultimaOrden.ordenReparacion.diasGarantia > 1 ? 's'  }}, desde el {{ ultimaOrden.fechaSalida | date('d-m-Y h:i:s a') }} hasta el {{ garantiaHasta | date('d-m-Y h:i:s a') }}.</div>
+                            <div>Referencia: <a href="{{ path('orden_trabajo_show', {'id': ultimaOrden.id }) }}" class="text-primary">{{ ultimaOrden.nroOrden }}</a></div>
+                        {% else %}
+                            <div class="text-danger">Equipo sin garantía</div>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <th>Observaciones finales</th>
+                <td>
+                {% if orden_reparacion.estadoFinal != 'R' %}
+                {{ orden_reparacion.ordenTrabajo.observacionesFinales | traducirSiglas }}<br>
+                {% endif %}
+                {{ orden_reparacion.observaciones }}</td>
+            </tr>
+            {% if orden_reparacion.ordenTrabajo.esReparacion %}
+            <tr>
+                <th>Materiales usados</th>
+                <td>
+                    Materiales registrados: {{ orden_reparacion.materialesUsados }} (Gasto: $ {{ orden_reparacion.gastoMateriales | number_format(2,'.',' ') }})<br>
+                    {% if orden_reparacion.otrosMateriales != '' and orden_reparacion.otrosGastos != 0 %}
+                        Materiales no registrados: {{ orden_reparacion.otrosMateriales }} (Gasto: $ {{ orden_reparacion.otrosGastos | number_format(2,'.',' ') }})<br>
+                    {% endif %}
+                    <b>Gasto total en materiales: $ {{ (orden_reparacion.gastoMateriales + orden_reparacion.otrosGastos) | number_format(2,'.',' ') }}</b>
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    {{ include('_mdb/mdb_metadata.html.twig', {'elem' : orden_reparacion}) }}
+    {{ include('_mdb/mdb_delete_modal.html.twig') }}
+</div>
+{% endblock %}

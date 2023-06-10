@@ -1,0 +1,31 @@
+<ul class="collapsible collapsible-accordion">
+    {% for modulo in modulos %}
+        {% if modulo.mostrar and (modulo.subsistema == app.session.get('modulo') or modulo.subsistema == 'todos') %}
+        <li><a
+                  {% if modulo.enlace_directo is defined %}
+                        href="{{ modulo.enlace_directo }}"
+                  {% endif %}
+                    class="collapsible-header waves-effect arrow-r"><img class="svg svg-invert" src="{{ asset('assets/zondicons/' ~ modulo.icon ~ '.svg') }}">{{ modulo.nombre }}
+                    {% if loop.index > 1 %}
+                        <i class="fas fa-angle-down rotate-icon"></i>
+                    {% endif %}
+            </a>
+            <div class="collapsible-body">
+                {% if modulo.enlaces %}
+                    <ul>
+                        {% for enlace in modulo.enlaces %}
+                            {% if enlace.mostrar %}
+                                <li>
+                                    <a href="{{ enlace.enlace }}" class="waves-effect">
+                                        <img class=" svg svg-invert" src="{{ asset('assets/zondicons/' ~ enlace.icon ~ '.svg') }}">
+                                        {{ enlace.nombre }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+</ul>

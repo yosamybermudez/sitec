@@ -1,0 +1,40 @@
+{% extends 'assets_views/document.html.twig' %}
+
+{% set footer = 'Servicios Integrales Tecnológicos – Esquina de Tejas entre 10 de octubre y San Joaquín – Teléfono: 78795048' %}
+
+{% block document %}
+    <table class="table table-xs">
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th class="text-right">Fondo inicial</th>
+            <th class="text-right">Fondo actual</th>
+            <th class="text-right">Ingreso</th>
+            <th class="text-right">Gasto en materiales</th>
+            <th class="text-right">Ganancia</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for jornada in jornadas %}
+            <tr>
+                <td data-order="{{ jornada.fecha|date('YmdHis') }}">{{ jornada.fecha ? jornada.fecha|date('d/m/Y') : '' }}</td>
+                <td class="text-right">$ {{ jornada.fondoInicial | number_format(2,'.',' ') }}</td>
+                <td class="text-right">$ {{ jornada.fondoActual | number_format(2,'.',' ') }}</td>
+                <td class="text-right">$ {{ (jornada.fondoActual - jornada.fondoInicial) | number_format(2,'.',' ') }}</td>
+                {% set gasto_materiales = jornada.gastoMateriales %}
+                <td class="text-right">$ {{ gasto_materiales | number_format(2,'.',',') }}</td>
+                {% set ganancia = jornada.fondoActual - jornada.fondoInicial - gasto_materiales %}
+                <td class="text-right">
+                    $ {{ (ganancia) | number_format(2,'.',',') }}
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3" class="pr-4 text-right"><b>Totales</b></td>
+            <td class="text-right no-wrap bold">$ {{ ingreso | number_format(2,'.',' ') }}</td>
+            <td class="text-right no-wrap bold">$ {{ gasto | number_format(2,'.',' ') }}</td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

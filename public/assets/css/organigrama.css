@@ -1,0 +1,43 @@
+a{
+    color: #337ab7;
+}
+
+a:hover{
+    color: #337ab7;
+}
+
+.organigrama * {
+    margin: 0px;
+    padding: 0px;
+}
+
+.organigrama ul {
+    padding-top: 20px;
+    position: relative;
+}
+
+.organigrama li {
+    float: left;
+    text-align: center;
+    list-style-type: none;
+    padding: 20px 5px 0px 5px;
+    position: relative;
+    height: 220px;
+}
+
+.organigrama li::before,
+.organigrama li::after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    right: 50%;
+    border-top: 1px solid #27629b;
+    width: 50%;
+    height: 20px;
+}
+
+.organigrama li::after {
+    right: auto;
+    left: 50%;
+    border-left: 1px solid #27629b;
+}

@@ -1,0 +1,56 @@
+/* MENU PRINCIPAL CSS*/
+
+ul.menu-first-level {
+    padding-top: 20px;
+    padding-left: 0px;
+    background-color: #f8f8f8;
+    border-right: 1px solid #e7e7e7;
+    z-index: 555;
+}
+
+ul.menu-second-level{
+    padding-top: 20px;
+    padding-left: 0px;
+    background-color: #efefef;
+    border-top: 1px solid #f8f8f8;
+    z-index: 555;
+}
+
+ul.menu-first-level a{
+    color: #000000;
+}
+
+ul.menu-first-level > li:hover{
+    background-color: #efefef;
+    /*border-bottom: 1px solid #e7e7e7;*/
+}
+
+ul.menu-first-level li:hover,
+ul.menu-first-level li > ul > li:hover{
+    border-right: 3px #2e6da4 solid;
+    background-color: #f8f8f8;
+}
+
+ul.menu-second-level{;
+    z-index: 555;
+}
+
+ul.menu-second-level{
+    display: none;
+    padding: 0px;
+    position: absolute;
+    left: calc(100% - 15px);
+}
+
+ul.menu-first-level li:hover > ul.menu-second-level{
+    display: inline-grid;
+    width: 100%;
+}
+
+ul.menu-first-level li h5{
+     margin: 0;
+}
+
+ul.menu-second-level li{
+    padding-left: 20px;
+}

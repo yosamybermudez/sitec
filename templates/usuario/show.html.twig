@@ -1,0 +1,66 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Usuario',
+        'link' : {
+            'back' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('usuario_index', {'estado' : 'activo'}) : '#',
+            'ops' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? {
+                'edit' : path('usuario_edit', { 'id': usuario.id }),
+                'delete' : null
+            } : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <div class="row">
+            <div class="col-2" style="margin-right: 3px;">
+                <div class="file-field" >
+                    <img  id="profile-photo" src="
+            {% if usuario.foto %}
+                   {{ asset('uploads/fotos_trabajadores/') }}{{ usuario.foto }}
+               {% else %}
+                   {% if usuario.sexo == 'Masculino' %}
+                       {{ asset('images/male.jpg') }}
+                   {% elseif usuario.sexo == 'Femenino' %}
+                       {{ asset('images/female.jpg') }}
+                   {% else %}
+                        {{ asset('images/generic.jpg') }}
+                   {% endif %}
+               {% endif %}
+            " class="thumbnail rounded z-depth-1-half avatar-pic float-left" style="width: 150px; height: 150px;" alt="example placeholder avatar">
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="row">
+                    <div class="col-12"><h4 class="trabajador-nombre">{{ usuario.nombreCompleto }}</h4></div>
+                    <div class="col-2 mb-2"><div class="text-primary fw-500">Usuario</div> {{ usuario.username }}</div>
+                    <div class="col-3 mb-2"><div class="text-primary fw-500">Correo electrónico</div> {{ usuario.email }}</div>
+                    <div class="col-7 mb-2"><div class="text-primary fw-500">Rol{% if usuario.rolesObjects | length > 1 %}es{% endif %}</div>
+                        {% for rol in usuario.rolesObjects %}
+                            <li style="list-style: none;">{{ rol.nombre }}</li>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if usuario.username != 'admin' %}
+        <div class="row mt-3">
+            <div class="col-6">
+                <h5>Datos personales</h5>
+                <div class="mb-2"><div class="text-primary fw-500">Carné de identidad</div> {{ usuario.carneIdentidad | empty_value_ne }}</div>
+                <div class="mb-2"><div class="text-primary fw-500">Fecha de nacimiento / Edad</div> {% if usuario.carneIdentidad %}{{ usuario.carneIdentidad | fecha_nacimiento }} / <span class="text-danger">{{ usuario.carneIdentidad | edad }} años</span>{% else %}N/E{% endif %}</div>
+                <div class="mb-2"><div class="text-primary fw-500">Dirección</div> {{ usuario.direccion | empty_value_ne }}</div>
+                <div class="mb-2"><div class="text-primary fw-500">Sexo</div> {{ usuario.sexo | empty_value_ne }}</div>
+            </div>
+            <div class="col-6">
+                <h5>Datos laborales</h5>
+                <div class="mb-2"><div class="text-primary fw-500">Fecha de alta</div> {{ usuario.fechaAlta | fecha_es }}</div>
+                <div class="mb-2"><div class="text-primary fw-500">Cargo</div> {{ usuario.cargo.nombre | empty_value_ne }}</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

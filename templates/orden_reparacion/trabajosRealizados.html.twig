@@ -1,0 +1,61 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Diagnósticos realizados',
+        'link' : {
+            'ops' : {
+                'print' : path('orden_reparacion_trabajos_realizados_imprimir'),
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+
+<div class="white">
+    <div>
+        <table id="datos-multi-select-desc-0" class="table table-xs">
+            <thead>
+                <tr>
+                    <th>Fecha de revisión</th>
+                    <th>Orden de trabajo</th>
+                    <th>Estado Final</th>
+                    <th>Ingreso</th>
+                    <th>Materiales usados</th>
+{#                    <th>Estado del equipo</th>#}
+                    <th data-orderable="false"></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for orden_reparacion in orden_reparacions %}
+                <tr>
+                    <td data-order="{{ orden_reparacion.created|date('YmdHis') }}">{{ orden_reparacion.created ? orden_reparacion.created|date('d/m/Y h:i:s a') : '' }}</td>
+                    <td>{{ orden_reparacion.ordenTrabajo.nroOrden }}</td>
+                    <td>{% if orden_reparacion.estadoFinal == 'R' %}
+                            <span class="glyphicon glyphicon-ok text-success"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove text-danger"></span>
+                        {% endif %}
+                    </td>
+                    <td>$ {{ orden_reparacion.ingreso | number_format(2,'.',' ') }}</td>
+                    <td>{{ orden_reparacion.materialesUsados }}</td>
+                    <td>
+                        <ul>
+                            {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                                'link' : {
+                                    'show' : is_granted('ROLE_TECNICO') ? path('orden_reparacion_show', { 'id': orden_reparacion.id }) : '#',
+                                    'edit' : is_granted('ROLE_TECNICO') ? path('orden_reparacion_edit', { 'id': orden_reparacion.id }) : '#',
+                                    'delete' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('orden_reparacion_delete', { 'id': orden_reparacion.id }) : '#'
+                                },
+                                'delete_id' : orden_reparacion.id
+                            }) }}
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

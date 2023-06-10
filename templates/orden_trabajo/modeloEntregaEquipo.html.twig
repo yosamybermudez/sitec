@@ -1,0 +1,247 @@
+{% extends 'assets_views/document.html.twig' %}
+
+{% set footer = 'Servicios Integrales Tecnológicos – Esquina de Tejas entre 10 de octubre y San Joaquín – Teléfono: 78795048' %}
+
+{% block document %}
+    <style>
+        .bold{
+            font-weight: bold;
+            text-align: right;
+            padding-right: 10px;
+        }
+        td:not(.bold){
+            padding-left: 10px;
+        }
+
+        table{
+            font-family: "Arial";
+        }
+
+        table.table-xs td{
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .text-blue-sitec {
+            color: rgb(2, 37, 75);
+        }
+    </style>
+<div class="table-1">
+    <table class="table table-bordered table-xs" style="background-color: white; table-layout: fixed; width: 100%;">
+        <tr>
+            <td rowspan="3" colspan="2">
+                <img src="{{ app.request.schemeAndHttpHost }}{{ asset('assets/institucional/sitec-logo-horizontal.jpg') }}" style="width: 100%;">
+            </td>
+            <td rowspan="3" colspan=3" class="text-blue-sitec" style="font-weight: bold; text-transform: uppercase; font-size: 20px; text-align: center; vertical-align: middle;">
+                Orden de trabajo
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="1" colspan="1" class="bold" >Nro. Orden</td>
+            <td rowspan="1" colspan="2">{{ orden_trabajo.nroOrden }}</td>
+        </tr>
+        <tr>
+            <td rowspan="1" colspan="1" class="bold">F. Entrada</td>
+            <td rowspan="1" colspan="2">{{ orden_trabajo.fechaEntrada | date('d-m-Y h:i:s a') }}</td>
+        </tr>
+        <tr>
+            <td colspan="8" class="bold text-center text-blue-sitec">Datos del cliente</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold" >Nombre y Apellidos</td>
+            <td colspan="3">{{ orden_trabajo.clienteNombreCompleto }}</td>
+            <td colspan="2" class="bold" >Carné de identidad</td>
+            <td colspan="1">{{ orden_trabajo.clienteCarneIdentidad }}</td>
+        </tr>
+        <tr>
+
+        </tr>
+        <tr>
+            <td colspan="2" class="bold">Teléfonos de contacto</td>
+            <td colspan="6">{{ orden_trabajo.clienteTelefonosContacto }}</td>
+        </tr>
+        <tr>
+            <td colspan="8" class="bold text-center text-blue-sitec">Datos de la recepción del equipo</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold">Tipo, Marca, Modelo, Serie</td>
+            <td colspan="6">{{ orden_trabajo.equipoTipo.nombre }} {{ orden_trabajo.equipoMarca }} {{ orden_trabajo.equipoModelo }} {% if orden_trabajo.equipoSerie %} - S/N: {{ orden_trabajo.equipoSerie }}{% endif %}</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold" >Técnico asignado</td>
+            <td colspan="6">{{ orden_trabajo.tecnicoRepara.nombreCompleto }}</td>
+        </tr>
+        <tr>
+            <td colspan="8" class="bold text-center text-blue-sitec">Datos de la reparación</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold">Fecha</td>
+            <td colspan="2">{{ orden_trabajo.ordenReparacion.created | date('d-m-Y h:i:s a') }}</td>
+            <td colspan="1" class="bold" >Reparado por</td>
+            <td colspan="3">{{ orden_trabajo.ordenReparacion.revisadoPor.nombreCompleto }}</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold">Importe cobrado</td>
+            <td colspan="2">$ {{ orden_trabajo.ordenReparacion.ingreso | number_format(2,'.',' ') }}</td>
+            <td colspan="2" class="bold" >Gasto en materiales</td>
+            <td colspan="2">$ {{ (orden_trabajo.ordenReparacion.gastoMateriales + orden_trabajo.ordenReparacion.otrosGastos)  | number_format(2,'.',' ') }}</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold">Materiales usados</td>
+            <td colspan="6">{{ orden_trabajo.ordenReparacion.materialesUsados }}
+                {% if orden_trabajo.ordenReparacion.otrosMateriales is not null %}
+                    <br>
+                    {{ orden_trabajo.ordenReparacion.otrosMateriales }} - Gasto en otros materiales: $ {{ (orden_trabajo.ordenReparacion.otrosGastos) | number_format(2,'.',' ') }}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold">Observaciones</td>
+            <td colspan="6">{{ orden_trabajo.ordenReparacion.observaciones }}</td>
+        </tr>
+        <tr>
+            <td colspan="{{ orden_trabajo.garantiaOrdenPrincipal is null and orden_trabajo.observacionesFinalesConverted == 'NR' ? '2' : '2'}}" class="bold">Estado final</td>
+            <td colspan="{{ orden_trabajo.garantiaOrdenPrincipal is null and orden_trabajo.observacionesFinalesConverted == 'NR' ? '6' : '1'}}">{{ orden_trabajo.observacionesFinalesConverted | traducirSiglas }}</td>
+            {% if orden_trabajo.observacionesFinalesConverted == 'R' %}
+                <td colspan="{{ orden_trabajo.garantiaOrdenPrincipal is null and orden_trabajo.observacionesFinalesConverted == 'NR' ? '2' : '1'}}" class="bold" >Garantía</td>
+                {% set garantia = orden_trabajo.ordenReparacion.diasGarantia %}
+                {% set garantiaHasta = garantia > 0 ? orden_trabajo.fechaSalida|date_modify("+"~garantia~"days") : 0 %}
+                <td colspan="4">{% if garantia == 0 %}No tiene garantía{% else %}{{ garantia }} día{{ garantia > 1 ? 's' }}. <b>Garantía hasta: {{ garantiaHasta | date('d-m-Y h:i:s a') }}</b> {% endif %}</td>
+            {% elseif orden_trabajo.observacionesFinalesConverted == 'NR' and orden_trabajo.garantiaOrdenPrincipal is not null %}
+                <td colspan="3" class="bold" >Indimenización al cliente</td>
+                <td colspan="3">$ {{ orden_trabajo.garantiaOrdenPrincipal.ordenReparacion.ingreso | number_format(2,'.',' ') }}</td>
+            {% endif %}
+        </tr>
+        <tr style="height: 50px;">
+            <td colspan="2" class="bold">Fecha de entrega al cliente</td>
+            <td colspan="2">{{ orden_trabajo.fechaSalida | date('d-m-Y h:i:s a') }}</td>
+            <td colspan="2" class="bold">Firma del cliente</td>
+            <td colspan="2"> </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold" >Impreso por</td>
+            <td colspan="6">{{ app.user.displayName and app.user.displayName != ' ' ? app.user.displayName : app.user.username }} - {{ "now" | date('d-m-Y h:i:s a') }}</td>
+        </tr>
+        <tr>
+            <td colspan="8" class="bold text-center text-blue-sitec">{{ footer }}</td>
+        </tr>
+    </table>
+</div>
+
+    <div style="height: 1px; border: 2px dashed black; margin: 20px 0;"></div>
+
+<div class="table-2">
+    <table class="table table-bordered table-xs" style="background-color: white; table-layout: fixed; width: 100%;">
+        <tr>
+            <td rowspan="3" colspan="2">
+                <img src="{{ app.request.schemeAndHttpHost }}{{ asset('assets/institucional/sitec-logo-horizontal.jpg') }}" style="width: 100%;">
+            </td>
+            <td rowspan="3" colspan="3" class="text-blue-sitec" style="font-weight: bold; text-transform: uppercase; font-size: 20px; text-align: center; vertical-align: middle;">
+                {% if orden_trabajo.observacionesFinalesConverted == 'NR' %}
+                    Comprobante de devolución
+                {% else %}
+                    {% if orden_trabajo.ordenReparacion.diasGarantia == 0 %}
+                        Comprobante de entrega
+                    {% elseif orden_trabajo.garantiaOrdenPrincipal is not null %}
+                        Comprobante de postgarantía
+                    {% else %}
+                        Comprobante de garantía
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="1" colspan="1" class="bold" >Nro. Orden</td>
+            <td rowspan="1" colspan="2">{{ orden_trabajo.nroOrden }}</td>
+        </tr>
+        <tr>
+            <td rowspan="1" colspan="1" class="bold">F. Entrada</td>
+            <td rowspan="1" colspan="2">{{ orden_trabajo.fechaEntrada | date('d-m-Y h:i:s a') }}</td>
+        </tr>
+        <tr>
+            <td colspan="8" class="bold text-center text-blue-sitec">Datos del cliente</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold" >Nombre y Apellidos</td>
+            <td colspan="3">{{ orden_trabajo.clienteNombreCompleto }}</td>
+            <td colspan="2" class="bold" >Carné de identidad</td>
+            <td colspan="1">{{ orden_trabajo.clienteCarneIdentidad }}</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold">Teléfonos de contacto</td>
+            <td colspan="6">{{ orden_trabajo.clienteTelefonosContacto }}</td>
+        </tr>
+        <tr>
+            <td colspan="8" class="bold text-center text-blue-sitec">Datos de la recepción del equipo</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold">Tipo, Marca, Modelo, Serie</td>
+            <td colspan="6">{{ orden_trabajo.equipoTipo.nombre }} {{ orden_trabajo.equipoMarca }} {{ orden_trabajo.equipoModelo }} {% if orden_trabajo.equipoSerie %} - S/N: {{ orden_trabajo.equipoSerie }}{% endif %}</td>
+        </tr>
+        <tr>
+            <td colspan="8" class="bold text-center text-blue-sitec">Datos de la reparación</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold">Fecha</td>
+            <td colspan="6">{{ orden_trabajo.ordenReparacion.created | date('d-m-Y h:i:s a') }}</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold" >Reparado por</td>
+            <td colspan="6">{{ orden_trabajo.ordenReparacion.revisadoPor.nombreCompleto }}</td>
+        </tr>
+        <tr>
+            <td colspan="{{ orden_trabajo.garantiaOrdenPrincipal is null and orden_trabajo.observacionesFinalesConverted == 'NR' ? '2' : '2'}}" class="bold">Estado final</td>
+            <td colspan="{{ orden_trabajo.garantiaOrdenPrincipal is null and orden_trabajo.observacionesFinalesConverted == 'NR' ? '6' : '1'}}">{{ orden_trabajo.observacionesFinalesConverted | traducirSiglas }}</td>
+            {% if orden_trabajo.observacionesFinalesConverted == 'R' %}
+                <td colspan="{{ orden_trabajo.garantiaOrdenPrincipal is null and orden_trabajo.observacionesFinalesConverted == 'NR' ? '2' : '1'}}" class="bold" >Garantía</td>
+                {% set garantia = orden_trabajo.ordenReparacion.diasGarantia %}
+                {% set garantiaHasta = garantia > 0 ? orden_trabajo.fechaSalida|date_modify("+"~garantia~"days") : 0 %}
+                <td colspan="4">{% if garantia == 0 %}No tiene garantía{% else %}{{ garantia }} día{{ garantia > 1 ? 's' }}. <b>Garantía hasta: {{ garantiaHasta | date('d-m-Y h:i:s a') }}</b> {% endif %}</td>
+            {% elseif orden_trabajo.observacionesFinalesConverted == 'NR' and orden_trabajo.garantiaOrdenPrincipal is not null %}
+                <td colspan="3" class="bold" >Indimenización al cliente</td>
+                <td colspan="3">$ {{ orden_trabajo.garantiaOrdenPrincipal.ordenReparacion.ingreso | number_format(2,'.',' ') }}</td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td colspan="2" class="bold">Observaciones</td>
+            <td colspan="6">{{ orden_trabajo.ordenReparacion.observaciones }}</td>
+        </tr>
+        <tr>
+            <td colspan="8" class="bold text-center text-blue-sitec">Datos de la entrega</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold">Fecha</td>
+            <td colspan="2">{{ orden_trabajo.fechaSalida | date('d-m-Y h:i:s a') }}</td>
+            <td colspan="2" class="bold" >Importe</td>
+            <td colspan="2">$ {{ orden_trabajo.ordenReparacion.ingreso | number_format(2,'.',' ') }}</td>
+        </tr>
+        {% if orden_trabajo.ordenReparacion.estadoFinal == 'R' and orden_trabajo.ordenReparacion.diasGarantia > 0 %}
+        <tr>
+            <td colspan="8">
+                <b>Términos de garantía: </b><br>
+                Esta garantía cubre solo la reparación y los componentes empleados, si son del taller, no por la totalidad del equipo. Es válida solo durante el período acordado.
+                El cliente debe estar convencido de la relación tiempo de garantía y el precio acordado.
+                    También se debe cumplir con las siguientes condiciones:<br>
+                <ul style="padding-left: 20px;">
+                    <li>El equipo debe presentarse físicamente en el taller antes del término de la garantía.</li>
+                    <li>El equipo no se abrió por nadie antes del término de la garantía.</li>
+                    <li>No hay mala manipulación del equipo por parte del cliente.</li>
+                    <li>Se presenta el comprobante de garantía correctamente conservado y sin tachadura.</li>
+                </ul>
+            </td>
+        </tr>
+        {% endif %}
+        <tr style="height: 50px;">
+            <td colspan="6" class="bold">Firma</td>
+            <td colspan="2"> </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="bold" >Impreso por</td>
+            <td colspan="6">{{ app.user.displayName and app.user.displayName != ' ' ? app.user.displayName : app.user.username }} - {{ "now" | date('d-m-Y h:i:s a') }}</td>
+        </tr>
+        <tr>
+            <td colspan="8" class="bold text-center text-blue-sitec">{{ footer }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

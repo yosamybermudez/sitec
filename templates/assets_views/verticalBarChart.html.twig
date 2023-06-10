@@ -1,0 +1,53 @@
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            {{ titulo }} <span class="bold">{{ anno }}</span>
+        </div>
+        <div class="panel-body">
+            <div id="canvas-holder" style="width:100%">
+                <canvas id="chart-verticalbar-{{ id }}"></canvas>
+            </div>
+        </div>
+        <script>
+            var MONTHS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            var color = Chart.helpers.color;
+            var configChart{{ id }} = {
+                type: 'bar',
+                data: {
+                    type: 'bar',
+                    labels: [{% for keys in array_labels|keys %}
+                        MONTHS[{{ keys -1 }}],
+                        {% endfor %}],
+                    datasets: [{
+                        label: 'Cantidad de trabajadores',
+                        backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+                        borderColor: window.chartColors.red,
+                        borderWidth: 1,
+                        data: [
+                            {% for a in array_data %}
+                            {{ a | length }},
+                            {% endfor %}
+                        ],
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                stepSize: 1
+                            }
+                        }]
+                    },
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Fluctuación de trabajadores por mes'
+                    }
+                },
+            };
+        </script>
+    </div>
+

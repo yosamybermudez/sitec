@@ -1,0 +1,15 @@
+    {% if show_link is defined %}
+    <li class="pull-right">
+        <a class="action-btn btn-primary" href="{{ show_link }}" title="Visualizar"><span class="glyphicon glyphicon-eye-open"></span></a>
+    </li>
+    {% endif %}
+    {% if edit_link is defined %}
+    <li class="pull-right">
+        <a class="action-btn btn-info" href="{{ edit_link }}" title="Modificar"><span class="glyphicon glyphicon-pencil"></span></a>
+    </li>
+    {% endif %}
+    {% if delete_link is defined %}
+        <li class="pull-right">
+            <a class="action-btn btn-danger" href="{{ delete_link }}" title="Eliminar"><span class="glyphicon glyphicon-trash"></span></a>
+        </li>
+    {% endif %}

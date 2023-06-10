@@ -1,0 +1,56 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Trabajos pendientes',
+        'link' : {
+            'personalized' : {
+                'path' : path('orden_reparacion_trabajos_realizados'),
+                'icon' : 'eye-open',
+                'text' : 'Ver todos mis trabajos'
+            },
+            'ops' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? {
+                'print' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? '' : '#',
+                'export' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? '' : '#',
+                'import' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? '' : '#'
+            } : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+
+<div class="white">
+        {% for orden_trabajo in orden_trabajos %}
+            <div class="col-12 col-lg-3 col-md-6 col-sm-12 col-xs-12 p-2" style="float: left;">
+                <!-- Card -->
+                <div class="card promoting-card mb-2">
+                    {% if orden_trabajo.estado != 'ECT' and orden_trabajo.estado != 'TR' %}<div class="bg-secondary" style="position: absolute; height: 10px; width: 100%; opacity: 0.6;"></div>{% endif %}
+                    <!-- Card content -->
+                    <div class="card-body">
+                        <div>
+                            <!-- Title -->
+                            <h5 class="card-title font-weight-bold mb-3">Orden de trabajo # {{ orden_trabajo.nroOrden }}</h5>
+                            <!-- Subtitle -->
+                            <p class="card-text"><i class="far fa-user pr-2"></i>{{ orden_trabajo.clienteNombreCompleto }}</p>
+                            <p class="card-text"><i class="far fa-file pr-2"></i>{{ orden_trabajo.equipoTipo.nombre }} / {{ orden_trabajo.equipoMarca }} {{ orden_trabajo.equipoModelo }}</p>
+                            <p class="card-text"><i class="far fa-calendar pr-2"></i>{{ orden_trabajo.fechaEntrada ? orden_trabajo.fechaEntrada|date('d-m-Y') : '' }}</p>
+                            <p class="card-text"><span class="glyphicon glyphicon-remove pr-2"></span>{{ orden_trabajo.motivoVisita }}</p>
+                            <p class="card-text"><span class="glyphicon glyphicon-question-sign pr-2"></span>Equipo dejado en taller: {{ orden_trabajo.estado == 'ECT' or orden_trabajo.estado == 'TR' ? 'No' : 'Si'}}</p>
+                            <!-- Button -->
+                            {% if orden_trabajo.dictamenTecnico == null %}
+                                <a class="btn btn-flat text-primary p-1 my-1 mr-0 mml-1 collapsed waves-effect float-right" href="{{ path('dictamen_tecnico_new', { 'id' : orden_trabajo.id }) }}">Dictaminar</a>
+                            {% else %}
+                                <a class="btn btn-flat text-primary p-1 my-1 mr-0 mml-1 collapsed waves-effect float-right" href="{{ path('orden_reparacion_new', { 'id' : orden_trabajo.id }) }}">Revisión</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!-- End -->
+            </div>
+        {% else %}
+            <div class="my-alert alert-info"> No hay trabajos pendientes</div>
+        {% endfor %}
+</div>
+{{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}

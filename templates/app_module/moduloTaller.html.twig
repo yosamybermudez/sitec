@@ -1,0 +1,96 @@
+{% if is_granted('ROLE_TECNICO') %}
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('dictamen_tecnico_trabajos_pendientes') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/search.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Mis trabajos pendientes</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('orden_reparacion_trabajos_realizados') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/wrench.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Mis trabajos realizados</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('materia_prima_existencias') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/cog.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Materias primas disponibles</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+{% endif %}
+{% if is_granted('ROLE_RECEPCIONISTA') %}
+    {% if jornada is null %}
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+            <a href="{{ path('jornada_new') }}">
+                <div class="card bg-primary text-white">
+                    <div class="card-header">
+                        <img class="svg svg-invert" src="{{ asset('assets/zondicons/document-add.svg') }}">
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Crear jornada para hoy</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% else %}
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+            <a href="{{ path('jornada_show', { 'id' : jornada.id }) }}">
+                <div class="card bg-primary text-white">
+                    <div class="card-header">
+                        <img class="svg svg-invert" src="{{ asset('assets/zondicons/search.svg') }}">
+                        {% if jornada.estado == 'Cerrada' %}
+                            <span class="text-white" style="float: right; margin: 0; height: 100%;">Cerrada</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ jornada.estado == 'Cerrada' ? 'Ver datos de la jornada' : 'Ver registro del día' }}</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% endif %}
+    {% if jornada and jornada.estado == 'Vigente' %}
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('orden_trabajo_new') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/document-add.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Crear orden de trabajo</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('orden_trabajo_reservar') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/list-add.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Registrar reservación</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+{% endif %}

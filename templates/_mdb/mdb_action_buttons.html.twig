@@ -1,0 +1,35 @@
+<div class="dropdown">
+    <button class="btn btn-floating dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false" style="margin: 0; float: right; box-shadow: none; height: 25px;"><span class="glyphicon glyphicon-option-vertical"></span></button>
+    <div class="dropdown-menu dropdown-primary">
+        {% if link['show'] is defined and link['show'] != '#' %}
+            <a class="dropdown-item btn-load act-spinner" href="{{ link['show'] }}"><i class="glyphicon glyphicon-eye-open text-primary mr-2"></i> Ver</a>
+        {% endif %}
+        {% if link['edit'] is defined and link['edit'] != '#' %}
+            <a class="dropdown-item btn-load act-spinner" href="{{ link['edit'] }}"><i class="glyphicon glyphicon-pencil text-secondary mr-2"></i> Editar</a>
+        {% endif %}
+        {% if link['print'] is defined and link['print'] != '#' %}
+            <a class="dropdown-item btn-load act-spinner" href="{{ link['print'] }}"><i class="glyphicon glyphicon-print text-warning mr-2"></i> Imprimir</a>
+        {% endif %}
+        {% if link['delete'] is defined and link['delete'] != '#' and is_granted('ROLE_ADMINISTRADOR_NEGOCIO') %}
+            <a
+                    {% if delete_id is defined %}
+                    data-modal={{ delete_id }}
+                {% endif %}
+                    data-form-action= {{ link['delete'] }}
+                    class="dropdown-item btn-load act-spinner" data-toggle="modal" href="#indexDelete"><i class="glyphicon glyphicon-trash text-danger mr-2"></i> Eliminar</a>
+        {% endif %}
+        {% if link['aux'] is defined and link['aux'] != '#' %}
+            <a class="dropdown-item btn-load act-spinner" href="{{ link['aux']['link'] }}"><i class="glyphicon glyphicon-{{ link['aux']['icon'] }} text-primary mr-2"></i> {{ link['aux']['text'] }}</a>
+        {% endif %}
+        {% if link['aux2'] is defined and link['aux2'] != '#' %}
+            <a class="dropdown-item btn-load act-spinner" onclick="return confirm('¿Está seguro(a) de la acción a realizar?')" href="{{ link['aux2']['link'] }}"><i class="glyphicon glyphicon-{{ link['aux2']['icon'] }} text-warning mr-2"></i> {{ link['aux2']['text'] }}</a>
+        {% endif %}
+        {% if link['aux1'] is defined and link['aux1'] != '#' %}
+            <a class="dropdown-item btn-load act-spinner" onclick="return confirm('¿Está seguro(a) de la acción a realizar?')" href="{{ link['aux1']['link'] }}"><i class="glyphicon glyphicon-{{ link['aux1']['icon'] }} text-info mr-2"></i> {{ link['aux1']['text'] }}</a>
+        {% endif %}
+        {% if link['aux3'] is defined and link['aux3'] != '#' %}
+            <a class="dropdown-item btn-load act-spinner" onclick="return confirm('¿Está seguro(a) de la acción a realizar?')" href="{{ link['aux3']['link'] }}"><i class="glyphicon glyphicon-{{ link['aux3']['icon'] }} text-secondary mr-2"></i> {{ link['aux3']['text'] }}</a>
+        {% endif %}
+    </div>
+</div>

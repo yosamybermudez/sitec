@@ -1,0 +1,33 @@
+<script>
+    var configChart = {
+        type: 'pie',
+        data: {
+            datasets: [{
+                data: [
+                    {% for a in chart_data %}
+                    {{ a }},
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    window.chartColors.darkslateblue, window.chartColors.lawngreen, window.chartColors.darkkhaki,
+                    window.chartColors.cornflowerblue, window.chartColors.firebrick, window.chartColors.palevioletred,
+                    window.chartColors.navajowhite, window.chartColors.coral, window.chartColors.aquamarine,
+                ],
+                label: 'Dataset 1'
+            }],
+            labels: [
+                {% for key in chart_data|keys %}
+                "{{ key }}",
+                {% endfor %}
+            ]
+        },
+        options: {
+            responsive: true
+        }
+    };
+
+    window.onload = function() {
+        var chart = document.getElementById('chart').getContext('2d');
+        window.myPie = new Chart(chart, configChart);
+    };
+</script>

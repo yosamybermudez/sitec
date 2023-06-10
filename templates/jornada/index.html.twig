@@ -1,0 +1,74 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+    {% set inicio = fecha_inicio is defined and fecha_inicio is not null ? fecha_inicio | date('Ymd') : null %}
+    {% set fin = fecha_fin is defined and fecha_fin is not null ? fecha_fin | date('Ymd') : null %}
+    {% if (inicio is null) and (fin is not null) %} {% set params = { 'fin' : fin } %}
+    {% elseif (fin is null) and (inicio is not null) %} {% set params = { 'inicio' : inicio } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio != fin ) %} {% set params = { 'inicio' : inicio, 'fin' : fin } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio == fin ) %} {% set params = { 'fecha' : inicio } %}
+    {% else %}
+        {% set params = {  } %}
+    {% endif %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Jornadas de trabajo. Fecha: ' ~ fecha,
+        'link' : {
+            'new' : is_granted('ROLE_RECEPCIONISTA') ? path('orden_trabajo_new') : '#',
+            'ops' : {
+                'print' : is_granted('ROLE_RECEPCIONISTA') ? path('jornada_exportar_pdfexcel_rango', params | merge({'tipo' : 'pdf'}) ) : '#',
+                'export' : is_granted('ROLE_RECEPCIONISTA') ? path('jornada_exportar_pdfexcel_rango', params | merge({'tipo' : 'excel'}) ) : '#',
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    {% include '_mdb/mdb_date_start_end_find.html.twig' with {'action' : path('jornada_index')} %}
+    <div>
+        <table id="datos-multi-select-desc-0" class="table table-xs">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th class="text-right">Fondo inicial</th>
+                <th class="text-right">Fondo actual</th>
+                <th class="text-right">Ingreso</th>
+                <th class="text-right">Gasto en materiales</th>
+                <th class="text-right">Ganancia</th>
+                <th data-orderable="false"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for jornada in jornadas %}
+            <tr>
+                <td data-order="{{ jornada.fecha|date('YmdHis') }}">{{ jornada.fecha ? jornada.fecha|date('d/m/Y') : '' }}</td>
+                <td class="text-right">$ {{ jornada.fondoInicial | number_format(2,'.',' ') }}</td>
+                <td class="text-right">$ {{ jornada.fondoActual | number_format(2,'.',' ') }}</td>
+                <td class="text-right">$ {{ (jornada.fondoActual - jornada.fondoInicial) | number_format(2,'.',' ') }}</td>
+                {% set gasto_materiales = jornada.gastoMateriales %}
+                <td class="text-right">$ {{ gasto_materiales | number_format(2,'.',',') }}</td>
+                {% set ganancia = jornada.fondoActual - jornada.fondoInicial - gasto_materiales %}
+                <td class="text-right">
+                    $ {{ (ganancia) | number_format(2,'.',',') }}
+                </td>
+                <td>
+                    <ul>
+                        {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                            'link' : {
+                                'show' : is_granted('ROLE_RECEPCIONISTA') ? path('jornada_show', { 'id': jornada.id }) : '#',
+                                'edit' : is_granted('ROLE_RECEPCIONISTA') ? path('jornada_edit', { 'id': jornada.id }) : '#',
+                                'delete' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('jornada_delete', { 'id': jornada.id }) : '#'
+                            },
+                            'delete_id' : jornada.id
+                        }) }}
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}

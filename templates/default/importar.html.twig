@@ -1,0 +1,41 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Titulo de prueba',
+        'link' : {
+            'back' : path('homepage')
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    {{ form_start(formUpload) }}
+    <div id="page-title"class="border-bottom">
+        <h1 class="pull-left">Archivo XLSX a importar</h1>
+        <div class="subtitle-data">
+            <a class="btn btn-info pull-right" href="{{ path('niveleducacional_index') }}"><span class="glyphicon glyphicon-arrow-left"></span> Volver a la lista</a>
+            <button class="btn btn-primary pull-right" type="submit"><span class="glyphicon glyphicon-ok"></span> Confirmar</button>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div>{{ form_label(formUpload.archivo) }}</div>
+        <div style="position:relative;">
+            <a class='btn btn-primary' href='javascript:;'>
+                <span class="glyphicon glyphicon-search"></span>  Examinar
+                {{ form_widget(formUpload.archivo, {'attr': {'class': 'form-control-file file-button', 'onChange' : '$("#upload-file-info").html($(this).val());'}}) }}
+            </a>
+            &nbsp;
+            <span class='alert alert-info' id="upload-file-info"></span>
+        </div>
+    </div>
+    <div class="col-lg-12">
+
+    </div>
+    {{ form_end(formUpload) }}
+    <div class="col-lg-12" style="margin-top: 20px;">
+        <a href="{{ asset('import/' ~ filename ~ '.xlsx') }}">
+            <img style="width: 40px;" src="{{ asset('images/xlsx.png') }}"> <span>Plantilla</span>
+        </a>
+    </div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'assets_views/document.html.twig' %}
+
+{% set footer = 'Servicios Integrales Tecnológicos – Esquina de Tejas entre 10 de octubre y San Joaquín – Teléfono: 78795048' %}
+
+{% block document %}
+    <table class="table table-xs">
+        <thead>
+        <tr>
+            <th colspan="6">
+                <table class="table-bordered" style="background-color: white; table-layout: fixed; width: 100%;">
+                    <tr>
+                        <td rowspan="3" colspan="1" class="p-3 pb-0">
+                            <img src="{{ app.request.schemeAndHttpHost }}{{ asset('assets/institucional/sitec-logo-horizontal.jpg') }}" style="width: 100%;">
+                        </td>
+                        <td rowspan="3" colspan="4" class="text-blue-sitec p-3 pb-0" style="font-weight: bold; text-transform: uppercase; font-size: 20px; text-align: center;">
+                            <h3>Materias primas</h3>
+                        </td>
+                    </tr>
+                </table>
+                <div class="text-center p-1 institucional-text"><small>{{ footer }}</small></div>
+            </th>
+        </tr>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>U/M</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Equipo destino</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for materia_prima in materia_primas %}
+            <tr>
+                <td>{{ materia_prima.nombre }}</td>
+                <td>{{ materia_prima.descripcion }}</td>
+                <td>{{ materia_prima.unidadMedida }}</td>
+                <td>{{ materia_prima.cantidad }}</td>
+                <td>$ {{ materia_prima.precio | number_format(2,'.',' ')}}</td>
+                <td>{{ materia_prima.tipoEquipoDestino ? materia_prima.tipoEquipoDestino.nombre  : '' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'assets_views/document.html.twig' %}
+
+{% set footer = 'Servicios Integrales Tecnológicos – Esquina de Tejas entre 10 de octubre y San Joaquín – Teléfono: 78795048' %}
+
+{% block document %}
+    <div>
+        <table class="table-bordered mb-3" style="background-color: white; table-layout: fixed; width: 100%;">
+            <tr>
+                <td rowspan="3" colspan="1">
+                    <img src="{{ app.request.schemeAndHttpHost }}{{ asset('assets/institucional/sitec-logo-horizontal.jpg') }}" style="width: 150%;">
+                </td>
+                <td rowspan="3" colspan="4" class="text-blue-sitec" style="font-weight: bold; text-transform: uppercase; font-size: 20px; text-align: center;">
+                    <h3>Movimiento de materias primas</h3>
+                    <h5>{{materia_prima_movimiento[0].nroMovimiento }}</h5>
+                </td>
+            </tr>
+        </table>
+        <div class="text-center mb-3 border-bottom p-1 institucional-text"><small>{{ footer }}</small></div>
+        <table class="table no-first-border table-xs">
+            <tr>
+                <th>Nro. Movimiento</th>
+                <td>{{ materia_prima_movimiento[0].nroMovimiento }}</td>
+            </tr>
+            <tr>
+                <th>Tipo</th>
+                <td>{{ materia_prima_movimiento[0].tipo | traducirSiglas }}</td>
+            </tr>
+            <tr>
+                <th>Motivo</th>
+                <td>
+                    {% if materia_prima_movimiento[0].ordenReparacion is not null %}
+                        Orden de trabajo
+                    {% elseif materia_prima_movimiento[0].entradaMateriaPrima is not null %}
+                        Entrada de materiales
+                    {% endif %}
+                </td>
+            </tr>
+            <tr style="border-top: 3px solid #dee2e6;">
+                <th>Nombre</th>
+                <th>Cantidad</th>
+            </tr>
+            {% for mmp in materia_prima_movimiento %}
+                <tr>
+                    <td>{{ mmp.materiaPrima.nombre }}</td>
+                    <td>{{ mmp.cantidad }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

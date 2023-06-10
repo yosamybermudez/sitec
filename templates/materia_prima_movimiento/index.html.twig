@@ -1,0 +1,85 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+
+    {% set inicio = fecha_inicio is defined and fecha_inicio is not null ? fecha_inicio | date('Ymd') : null %}
+    {% set fin = fecha_fin is defined and fecha_fin is not null ? fecha_fin | date('Ymd') : null %}
+    {% if (inicio is null) and (fin is not null) %} {% set params = { 'fin' : fin } %}
+    {% elseif (fin is null) and (inicio is not null) %} {% set params = { 'inicio' : inicio } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio != fin ) %} {% set params = { 'inicio' : inicio, 'fin' : fin } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio == fin ) %} {% set params = { 'fecha' : inicio } %}
+    {% else %}
+        {% set params = {  } %}
+    {% endif %}
+
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Movimientos de materias primas. Fecha: ' ~ fecha,
+        'link' : {
+            'new' : is_granted('ROLE_ADMINISTRACION') ? path('homepage') : '#',
+            'ops' : {
+                'print' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('materia_prima_movimiento_exportar_pdfexcel_rango', params | merge({'tipo' : 'pdf'}) ) : '#',
+                'export' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('materia_prima_movimiento_exportar_pdfexcel_rango', params | merge({'tipo' : 'excel'}) ) : '#',
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    {% include '_mdb/mdb_date_start_end_find.html.twig' with {'action' : path('materia_prima_movimiento_index')} %}
+    <div>
+        <table id="datos-multi-select-desc-0" class="table table-xs">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Nro. Movimiento</th>
+                <th>Materias primas</th>
+                <th>Saldo total</th>
+                <th>Tipo de mov.</th>
+                <th>Motivo</th>
+                <th data-sortable="false"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for materia_prima_movimiento in materia_prima_movimientos %}
+            <tr>
+                <td class="no-wrap" data-order="{{ materia_prima_movimiento[0].created | date('YmdHis') }}">{{ materia_prima_movimiento[0].created ? materia_prima_movimiento[0].created|date('d-m-Y h:i:s a') : '' }}</td>
+                <td>{{ materia_prima_movimiento[0].nroMovimiento }}</td>
+                <td>
+                    {% for mp in materia_prima_movimiento %}
+                        <li class="no-wrap"><span class="no-wrap">{{ mp.materiaPrima.nombre }} - {{ mp.cantidad }}</span> <span class="bold">($ {{ (mp.cantidad * mp.materiaPrima.precio) | number_format(2,'.',' ') }})</span></li>
+                    {% endfor %}
+                </td>
+                <td class="text-right no-wrap">
+                    {% if materia_prima_movimiento[0].ordenReparacion is not null %}
+                        $ {{ materia_prima_movimiento[0].ordenReparacion.gastoMateriales | number_format(2,'.',' ') }}
+                    {% elseif materia_prima_movimiento[0].entradaMateriaPrima is not null %}
+                        $ {{ materia_prima_movimiento[0].entradaMateriaPrima.importeTotal | number_format(2,'.',' ') }}
+                    {% endif %}
+                </td>
+                <td>{{ materia_prima_movimiento[0].tipo | traducirSiglas }}</td>
+                <td>
+                    {% if materia_prima_movimiento[0].ordenReparacion is not null %}
+                        Orden de trabajo
+                    {% elseif materia_prima_movimiento[0].entradaMateriaPrima is not null %}
+                        Entrada de materiales
+                    {% endif %}
+                </td>
+                <td>
+                    <ul>
+                        {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                            'link' : {
+                                'show' : is_granted('ROLE_ADMINISTRACION') ? path('materia_prima_movimiento_show', { 'id': materia_prima_movimiento[0].id }) : '#',
+                                'delete' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('materia_prima_movimiento_delete', { 'id': materia_prima_movimiento[0].id }) : '#'
+                            },
+                            'delete_id' : materia_prima_movimiento[0].id
+                        }) }}
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

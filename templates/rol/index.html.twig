@@ -1,0 +1,57 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Roles',
+        'link' : {
+            'new' : is_granted('ROLE_ADMINISTRADOR_SISTEMA') ? path('rol_new') : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <table id="datos-multi-select-all" class="table table-xs">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                {% if is_granted('ROLE_ADMINISTRADOR_SISTEMA') %}
+                    <th>Rango</th>
+                    <th>Identificador (sistema)</th>
+                {% endif %}
+                <th data-sortable="false"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rol in roles %}
+            <tr>
+                <td>{{ rol.nombre }}</td>
+                <td>{{ rol.descripcion }}</td>
+                {% if is_granted('ROLE_ADMINISTRADOR_SISTEMA') %}
+                    <td data-order="{{ rol.rango }}">{{ rol.rango }}</td>
+                    <td>ROLE_{{ rol.identificador | upper }}</td>
+                {% endif %}
+                <td>
+                    <ul>
+                        {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                            'link' : {
+                                'show' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('rol_show', { 'id': rol.id }) : '#',
+                                'edit' : is_granted('ROLE_ADMINISTRADOR_SISTEMA') ? path('rol_edit', { 'id': rol.id }) : '#',
+                                'delete' : is_granted('ROLE_ADMINISTRADOR_SISTEMA') ? path('rol_delete', { 'id': rol.id }) : '#'
+                            },
+                            'delete_id' : rol.id
+                        }) }}
+                    </ul>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3"> <div class="sad"></div> No hay resultados </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}

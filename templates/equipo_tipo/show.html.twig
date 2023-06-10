@@ -1,0 +1,33 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Tipo de equipo',
+        'link' : {
+            'back' : path('equipo_tipo_index'),
+            'ops' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? {
+                'edit' : path('equipo_tipo_edit', { 'id': equipo_tipo.id }),
+                'delete' : null
+            } : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <table class="table no-first-border table-xs">
+            <tbody>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ equipo_tipo.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Descripción</th>
+                <td>{{ equipo_tipo.descripcion }}</td>
+            </tr>
+            </tbody>
+        </table>
+        {{ include('_mdb/mdb_metadata.html.twig', {'elem' : equipo_tipo}) }}
+        {{ include('_mdb/mdb_delete_modal.html.twig') }}
+    </div>
+{% endblock %}

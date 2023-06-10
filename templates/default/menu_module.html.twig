@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="{{ asset('assets/css/main-menu.css') }}">
+<ul class="menu-first-level">
+    {% for modulo in modulos %}
+        <li style="overflow: hidden;">
+            <a href="
+            {% if modulo.enlace_directo is defined %}
+                {{ modulo.enlace_directo }}
+            {% else %}
+                {{ path('modulo', {'id': modulo.id }) }}
+            {% endif %}
+            " class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding: 10px;">
+                <img src="{{ asset('assets/zondicons/' ~ modulo.icon ~ '.svg') }}" style="float: left; height: 20px; margin-right: 10px;">
+                <h5 style="margin-top: 0">{{ modulo.nombre }}</h5>
+            </a>
+            {% if modulo.enlaces %}
+                <ul class="menu-second-level">
+                    {% for enlace in modulo.enlaces %}
+                        <li style="overflow: hidden;">
+                            <a href="{{ enlace.enlace }}" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding: 10px;">
+                                <img src="{{ asset('assets/zondicons/' ~ enlace.icon ~ '.svg') }}" style="float: left; height: 20px; margin-right: 10px;">
+                                <h5 style="margin-top: 0">{{ enlace.nombre }}</h5>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

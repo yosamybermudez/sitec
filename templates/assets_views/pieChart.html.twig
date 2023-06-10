@@ -1,0 +1,41 @@
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            {{ titulo }}
+            <p class="pull-right bold">Total: {{ total }}</p>
+        </div>
+        <div class="panel-body">
+            <div id="canvas-holder" style="width:100%">
+                <canvas id="chart-area-{{ id }}"></canvas>
+            </div>
+        </div>
+        <script>
+            var configChart{{ id }} = {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [
+                            {% for a in array_data %}
+                            {{ a["value"] }},
+                            {% endfor %}
+
+                        ],
+                        backgroundColor: [
+                            window.chartColors.darkslateblue, window.chartColors.lawngreen, window.chartColors.darkkhaki,
+                            window.chartColors.cornflowerblue, window.chartColors.firebrick, window.chartColors.palevioletred,
+                            window.chartColors.navajowhite, window.chartColors.coral, window.chartColors.aquamarine,
+                        ],
+                        label: 'Gráfico {{ id }}'
+                    }],
+                    labels: [
+                        {% for a in array_data %}
+                        "{{ a["key"] }}",
+                        {% endfor %}
+                    ]
+                },
+                options: {
+                    responsive: true
+                }
+            };
+        </script>
+    </div>
+

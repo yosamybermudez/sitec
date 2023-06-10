@@ -1,0 +1,96 @@
+<!-- Sidebar navigation -->
+<div id="slide-out" class="side-nav primary-color">
+    <ul class="custom-scrollbar">
+        <!-- Logo -->
+        <li>
+            <div class="logo-wrapper waves-light border-top border-light" style="background-color: white;">
+                <a href="#">
+                    <img id="system-logo" src="{{ asset('assets/institucional/sitec-logo-horizontal.jpg') }}">
+                </a>
+            </div>
+        </li>
+        <!--/. Logo -->
+        <!-- Side navigation links -->
+        <li>
+            {{ render(controller('App\\Controller\\DefaultController::mainMenuAction')) }}
+            <ul class="collapsible collapsible-accordion">
+                <li><a class="collapsible-header waves-effect arrow-r"><img class="svg svg-invert" src="/sitec/public/assets/zondicons/cog.svg"> Opciones
+                        <i class="fas fa-angle-down rotate-icon"></i></a>
+                    <div class="collapsible-body">
+                        <ul>
+                            <li><a href="{{ path('sistema_clean_cache') }}" class="waves-effect"
+                                   onclick="return confirm('¿Está seguro de la acción a realizar?');">
+                                    <img class="svg svg-invert" src="/sitec/public/assets/zondicons/trash.svg">
+                                    Limpiar caché</a></li>
+                            <li><a href="{{ path('logout') }}" class="waves-effect">
+                                    <img class="svg svg-invert" src="/sitec/public/assets/zondicons/stand-by.svg">
+                                    Cerrar sesión</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+{#            <ul class="collapsible collapsible-accordion">#}
+{#                <li><a class="collapsible-header waves-effect arrow-r"><i class="fas fa-chevron-right"></i> Submit#}
+{#                        blog<i class="fas fa-angle-down rotate-icon"></i></a>#}
+{#                    <div class="collapsible-body">#}
+{#                        <ul>#}
+{#                            <li><a href="#" class="waves-effect">Submit listing</a>#}
+{#                            </li>#}
+{#                            <li><a href="#" class="waves-effect">Registration form</a>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </li>#}
+{#                <li><a class="collapsible-header waves-effect arrow-r"><i class="far fa-hand-pointer"></i>#}
+{#                        Instruction<i class="fas fa-angle-down rotate-icon"></i></a>#}
+{#                    <div class="collapsible-body">#}
+{#                        <ul>#}
+{#                            <li><a href="#" class="waves-effect">For bloggers</a>#}
+{#                            </li>#}
+{#                            <li><a href="#" class="waves-effect">For authors</a>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </li>#}
+{#                <li><a class="collapsible-header waves-effect arrow-r"><i class="fas fa-eye"></i> About<i#}
+{#                                class="fas fa-angle-down rotate-icon"></i></a>#}
+{#                    <div class="collapsible-body">#}
+{#                        <ul>#}
+{#                            <li><a href="#" class="waves-effect">Introduction</a>#}
+{#                            </li>#}
+{#                            <li><a href="#" class="waves-effect">Monthly meetings</a>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </li>#}
+{#                <li><a class="collapsible-header waves-effect arrow-r"><i class="far fa-envelope"></i> Contact me<i#}
+{#                                class="fas fa-angle-down rotate-icon"></i></a>#}
+{#                    <div class="collapsible-body">#}
+{#                        <ul>#}
+{#                            <li><a href="#" class="waves-effect">FAQ</a>#}
+{#                            </li>#}
+{#                            <li><a href="#" class="waves-effect">Write a message</a>#}
+{#                            </li>#}
+{#                            <li><a href="#" class="waves-effect">FAQ</a>#}
+{#                            </li>#}
+{#                            <li><a href="#" class="waves-effect">Write a message</a>#}
+{#                            </li>#}
+{#                            <li><a href="#" class="waves-effect">FAQ</a>#}
+{#                            </li>#}
+{#                            <li><a href="#" class="waves-effect">Write a message</a>#}
+{#                            </li>#}
+{#                            <li><a href="#" class="waves-effect">FAQ</a>#}
+{#                            </li>#}
+{#                            <li><a href="#" class="waves-effect">Write a message</a>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </li>#}
+{#            </ul>#}
+
+        </li>
+        <!--/. Side navigation links -->
+    </ul>
+{#    <div class="sidenav-bg blue-gradient"></div>#}
+</div>
+<!--/. Sidebar navigation -->

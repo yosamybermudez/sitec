@@ -1,0 +1,30 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block form_start %}
+    {{ form_start(form) }}
+{% endblock %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Datos del rol',
+        'link' : {
+            'back' : path('rol_index'),
+            'submit' : 'Confirmar'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <div class="row">
+        <div class="col-lg-4 col-sm-12 col-xs-12 md-form">{{ form_row(form.identificador) }}</div>
+        <div class="col-lg-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.nombre) }}</div>
+        <div class="col-lg-2 col-sm-12 col-xs-12 md-form">
+            {{ form_row(form.rango , {'attr' : {'class' : 'mdb-select md-form', 'searchable' : 'Buscar'}}) }}
+        </div>
+        <div class="col-lg-12 col-sm-12 col-xs-12 md-form">{{ form_row(form.descripcion) }}</div>
+        {% endblock %}
+        {% block form_end %}
+        {{ form_row(form._token) }}
+        {{ form_end(form, {'render_rest': false}) }}
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Titulo de prueba',
+        'link' : {
+            'back' : path('homepage')
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <h1 id="module-title">
+        Informes de {{ modulo.nombre }}
+    </h1>
+    {% if modulo.enlaces | length > 0 %}
+        <div class="col-lg-12" id="modulos">
+            <div class="col-lg-12">
+                {% for enlace in modulo.enlaces %}
+                    <div style="overflow: hidden; padding: 5px;" class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+                        <a href="{{ enlace.enlace }}" class="modulo principal col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding: 5px;">
+                            <img src="{{ asset('assets/zondicons/' ~ enlace.icon ~ '.svg') }}">
+                            <h5 class="modulo-enlace" style="margin-top: 0">{{ enlace.nombre }}</h5>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <h4 class="alert alert-info">El subsistema no cuenta con generación de reportes.</h4>
+    {% endif %}
+
+{% endblock %}

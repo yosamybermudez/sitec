@@ -1,0 +1,31 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block form_start %}
+    {{ form_start(form) }}
+{% endblock %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Movimiento de materias primas',
+        'link' : {
+            'back' : path('materia_prima_movimiento_index'),
+            'submit' : 'Confirmar'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        {{ form_row(form) }}
+    </div>
+{% endblock %}
+
+{% block form_end %}
+
+    {{ form_end(form, {'render_rest':false}) }}
+{% endblock %}
+
+
+{% block script %}
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% if is_granted('ROLE_ADMINISTRACION') %}
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('materia_prima_index') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/layers.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Materias primas</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('materia_prima_entrada_index') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/download.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Entradas de materias primas</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('materia_prima_movimiento_index') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/repost.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Movimientos de materias primas</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+{% endif %}

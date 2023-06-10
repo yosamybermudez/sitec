@@ -1,0 +1,19 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block body_fluid %}
+    <div style="text-align: center;">
+        <img src="{{ asset('assets/zondicons/information-outline.svg') }}" style=" height: 90px; margin-right: 0px auto;">
+        <h1 style="padding-bottom: 10px;">
+        </h1>
+
+        <div class="">
+                <h3 style="margin-top: 0">Detalles del error</h3>
+
+            <div class="alert alert-danger" role="alert">
+                No tiene permisos para acceder a la ruta solicitada
+            </div>
+
+        </div>
+        <a class="btn btn-primary" href="{{ app.request.headers.get('referer') }}">Volver a la página anterior</a>
+    </div>
+{% endblock %}

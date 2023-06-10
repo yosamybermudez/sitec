@@ -1,0 +1,85 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Materia prima',
+        'link' : {
+            'back' : path('materia_prima_index'),
+            'ops' : is_granted('ROLE_ADMINISTRACION') ? {
+                'edit' : path('materia_prima_edit', { 'id': materia_prima.id }),
+                'delete' : null
+            } : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <table class="table no-first-border table-xs">
+        <tbody>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ materia_prima.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Descripcion</th>
+                <td>{{ materia_prima.descripcion | empty_value_ne }}</td>
+            </tr>
+            <tr>
+                <th>Equipo destino</th>
+                <td>{{ materia_prima.tipoEquipoDestino.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Precio</th>
+                <td>$ {{ materia_prima.precio | number_format(2,'.',' ') }}</td>
+            </tr>
+            <tr>
+                <th>U/M</th>
+                <td>{{ materia_prima.unidadMedida }}</td>
+            </tr>
+            <tr>
+                <th>Cantidad</th>
+                <th>{{ materia_prima.cantidad }}</th>
+            </tr>
+            {% if materia_prima.movimientosMateriaPrima | length > 0 %}
+            <tr>
+                <th colspan="2" class="text-center">Movimientos</th>
+            </tr>
+            {% set movimientos = materia_prima.movimientosMateriaPrima %}
+            <tr>
+                <td colspan="2">
+                    <table class="table table-xs">
+                        <thead>
+                        <th>Fecha</th>
+                        <th>No. Movimiento</th>
+                        <th>Referencia</th>
+                        <th>Tipo</th>
+                        <th>Cantidad</th>
+                        <th>Existencias</th>
+                        </thead>
+                        <tbody>
+                        {% for mov in movimientos %}
+                            <tr>
+                                <td>{{ mov.created | date('d/m/Y h:i:s a') }}</td>
+                                <td><a href="{{ path('materia_prima_movimiento_show', {'id': mov.id}) }}">{{ mov.nroMovimiento }}</a></td>
+                                <td>
+                                    {% if mov.ordenReparacion is not null %}
+                                        <a href="{{ path('orden_reparacion_show', {'id': mov.ordenReparacion.id}) }}" >OR_{{ mov.ordenReparacion.ordenTrabajo.nroOrden }}</a>
+                                    {% endif %}
+                                </td>
+                                <td>{{ mov.tipo == 'E' ?  '<span class="glyphicon glyphicon-arrow-up text-success"></span>' : '<span class="glyphicon glyphicon-arrow-down text-danger"></span>' }}</td>
+                                <td>{{ mov.cantidad }}</td>
+                                <td>{{ mov.cantidadRestante }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+    {{ include('_mdb/mdb_metadata.html.twig', {'elem' : materia_prima}) }}
+    {{ include('_mdb/mdb_delete_modal.html.twig') }}
+</div>
+{% endblock %}

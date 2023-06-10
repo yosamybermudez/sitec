@@ -1,0 +1,71 @@
+security:
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        database_users:
+            entity:
+                class: App\Entity\Usuario
+                property: username
+        backend_users:
+            memory:
+                users:
+                    administrador: { password: administrador, roles: ['ROLE_SYSTEM_ADMIN' ] }
+        all_users:
+            chain:
+                providers: ['database_users', 'backend_users']
+
+#        my_active_directory_provider:
+#            id: riper.security.active.directory.user.provider
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            id: App\Security\UserProvider
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            pattern: ^/
+            anonymous: true
+            lazy: true
+            provider: app_user_provider
+            access_denied_url: /acceso_denegado
+            form_login:
+                login_path: /login
+                check_path: /login
+                use_referer: false
+                username_parameter: _username
+                password_parameter: _password
+            guard:
+                authenticators:
+                    - App\Security\DatabaseLdapAuthenticator
+
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#firewalls-authentication
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext
+        Symfony\Component\Ldap\Security\LdapUser:
+            algorithm: bcrypt
+        Riper\Security\ActiveDirectoryBundle\Security\User\AdUser :
+            algorithm: sha512
+        App\Security\User:
+            algorithm: auto
+        App\Entity\Usuario:
+            algorithm: auto
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        - { path: ^/sistema/instalar, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/logout, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/*, roles: IS_AUTHENTICATED_FULLY }
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/profile, roles: ROLE_USER }
+    role_hierarchy:
+        ROLE_ADMINISTRADOR_SISTEMA:   [ROLE_ADMINISTRADOR_NEGOCIO]
+        ROLE_ADMINISTRADOR_NEGOCIO: [ROLE_ADMINISTRACION]
+        ROLE_ADMINISTRACION: [ROLE_RECEPCIONISTA, ROLE_USUARIO_ESTANDAR]

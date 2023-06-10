@@ -1,0 +1,91 @@
+<table class="table-bordered mb-3 text-center table-xs" style="background-color: white; table-layout: fixed; width: 100%;">
+    <tr>
+        <td colspan="4"></td>
+        <td class="bold">Fecha seleccionada</td>
+        <td>{{ fecha | date('d/m/Y') }}</td>
+    </tr>
+    <tr>
+        {% if tipo is same as('diario') %}
+            <td class="bold">Fecha</td>
+            <td>{{ start | date('d/m/Y') }}</td>
+        {% else %}
+            <td class="bold">Rango</td>
+            <td>{{ start | date('d/m/Y') }} - {{ end | date('d/m/Y') }}</td>
+        {% endif %}
+        <td class="bold">Ingreso total</td>
+        <td>$ {{ ingresos | number_format(2,'.',' ')}}</td>
+        <td class="bold">Gasto total</td>
+        <td>$ {{ gastos | number_format(2,'.',' ')}}</td>
+    </tr>
+</table>
+    <div class="mt-3">
+    {% if ordenesTrabajoRangoTodas | length == 0 %}
+        No hay registros para el rango
+    {% else %}
+        <table class="table table-xs text-center">
+            <thead>
+                <th>Nro. Orden</th>
+                <th>Datos del equipo</th>
+                <th>Ingreso</th>
+                <th>Gasto</th>
+                <th>Estado final</th>
+                <th style="border-left: 2px solid #dee2e6;">Fecha Entrada</th>
+                <th>Fecha Dictamen</th>
+                <th>Fecha Listo Entregar</th>
+                <th>Fecha Notificación</th>
+                <th>Fecha Facturación</th>
+                <th>Fecha Salida</th>
+            </thead>
+            <tbody>
+                {% for orden in ordenesTrabajoRangoTodas %}
+                <tr>
+                    <td class="text-left">{{ orden.nroOrden }}</td>
+                    <td>{{ orden.datosEquipo }}</td>
+                    <td class="text-right">${{ (orden.ordenReparacion ? orden.ordenReparacion.ingreso : 0) | number_format(2,'.',' ') }}</td>
+                    <td class="text-right">${{ (orden.ordenReparacion ? (orden.ordenReparacion.gastoMateriales + orden.ordenReparacion.otrosGastos) : 0) | number_format(2,'.',' ') }}</td>
+                    <td>{% if orden.observacionesFinales == 'R' %}<span class="glyphicon glyphicon-ok text-success"></span>{% else %}<span class="glyphicon glyphicon-remove text-danger"></span>{% endif %}</td>
+                    <td style="border-left: 2px solid #dee2e6;">{{ orden.fechaEntrada ? orden.fechaEntrada | date('d-m') : '-' }}</td>
+                    <td>{{ orden.fechaDictamen ? orden.fechaDictamen | date('d-m') : '-' }}</td>
+                    <td>{{ orden.fechaListoEntregar ? orden.fechaListoEntregar | date('d-m') : '-' }}</td>
+                    <td>{{ orden.fechaNotificacion ? orden.fechaNotificacion | date('d-m') : '-' }}</td>
+                    <td>{{ orden.fechaFacturacion ? orden.fechaFacturacion | date('d-m') : '-' }}</td>
+                    <td>{{ orden.fechaSalida ? orden.fechaSalida | date('d-m') : '-' }}</td>
+                </tr>
+                {% endfor %}
+            <tr>
+                <td colspan="2" class="text-center bold">Totales</td>
+                <td class="text-right bold">${{ ingresos | number_format(2,'.',' ')}}</td>
+                <td class="text-right bold">${{ gastos | number_format(2,'.',' ')}}</td>
+                <td colspan="8"></td>
+            </tr>
+            </tbody>
+        </table>
+{#        {% for categoria in ordenesTrabajoRango|keys %}#}
+{#            {% set var = '' %}#}
+{#                {% if(categoria == 'fechaEntrada') %} {% set var = 'Órdenes que entraron en el período' %}{% endif %}#}
+{#                {% if(categoria == 'fechaSalida') %} {% set var = 'Órdenes que salieron en el período' %}{% endif %}#}
+{#                {% if(categoria == 'fechaListoEntregar') %} {% set var = 'Órdenes listas para entregar en el período' %}{% endif %}#}
+{#                {% if(categoria == 'fechaNotificacion') %} {% set var = 'Órdenes notificadas en el período' %}{% endif %}#}
+{#                {% if(categoria == 'fechaDictamen') %} {% set var = 'Órdenes dictaminadas en el período' %}{% endif %}#}
+{#                {% if(categoria == 'fechaFacturacion') %} {% set var = 'Órdenes facturadas en el período' %}{% endif %}#}
+{#                {% if(categoria == 'fechaDecomiso') %} {% set var = 'Equipos decomisados en el período' %}{% endif %}#}
+{#            <div class="mb-3">#}
+{#                <h5>{{ var }} <span class="badge badge-primary badge-pill">{{ ordenesTrabajoRango[categoria] | length }}</span></h5>#}
+{#                {% if ordenesTrabajoRango[categoria] | length != 0 %}#}
+{#                    <table>#}
+{#                        <thead>#}
+{#                        <th>Nro. Orden</th>#}
+{#                        </thead>#}
+{#                        <tbody>#}
+{#                        {% for orden in ordenesTrabajoRango[categoria] %}#}
+{#                            <tr>#}
+{#                                <td>{{ orden.nroOrden }}</td>#}
+{#                            </tr>#}
+{#                        {% endfor %}#}
+{#                        </tbody>#}
+{#                    </table>#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        {% endfor %}#}
+    {% endif %}
+    </div>

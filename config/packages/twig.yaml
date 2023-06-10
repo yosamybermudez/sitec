@@ -1,0 +1,4 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+#    form_themes: ['_mdb/mdb_form_layout.html.twig']
+    form_themes: ['_form_template/bootstrap_4_layout.html.twig']

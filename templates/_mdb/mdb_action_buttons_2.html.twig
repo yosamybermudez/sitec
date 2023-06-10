@@ -1,0 +1,14 @@
+    {% if link['show'] is defined %}
+        <a class="text-info ml-1" href="{{ link['show'] }}" title="Ver"><i class="glyphicon glyphicon-eye-open"></i></a>
+    {% endif %}
+    {% if link['edit'] is defined %}
+        <a class="text-secondary ml-1" href="{{ link['edit'] }}" title="Modificar"><i class="glyphicon glyphicon-pencil"></i></a>
+    {% endif %}
+    {% if link['delete'] is defined  %}
+        <a
+                {% if delete_id is defined %}
+                data-modal={{ delete_id }}
+                {% endif %}
+                data-form-action= {{ link['delete'] }}
+                class="text-danger delete-modal ml-1" title="Eliminar"  data-toggle="modal" href="#indexDelete"><i class="glyphicon glyphicon-trash"></i></a>
+    {% endif %}

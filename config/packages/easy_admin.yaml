@@ -1,0 +1,64 @@
+easy_admin:
+    design:
+        menu:
+            - {label: "Entidades"}
+            - label: "Departamentos"
+              children:
+                  - {entity: Departamento, label: "Lista de departamentos", icon: "th-list"}
+                  - {entity: Departamento, label: "Añadir departamento", icon: "plus", params: {action: 'new'}}
+            - label: "Organismos"
+              children:
+                  - {entity: Organismo, label: "Lista de Organismos", icon: "th-list"}
+                  - {entity: Organismo, label: "Añadir Organismos", icon: "plus"}
+            - Tag
+            - {label: "Configuración"}
+            - {entity: Usuario, icon: "user"}
+    site_name: 'OverSeas <b>Media</b>'
+    user:
+        display_name: true
+        display_avatar: true
+        name_property_path: 'username'
+    entities:
+        Osde:
+            class: App\Entity\Departamento
+            label: "Departamento"
+            form:
+                fields:
+                    - {type: 'group', icon: 'pencil', label: 'Basic Information', css_class: 'col-lg-7'}
+                    - nombre
+                    - area
+                    - {property: 'content', type: 'text_editor'}
+                    - created
+                    - updated
+                    - {type: 'group', icon: 'th-list', label: 'Other Information', css_class: 'col-lg-5'}
+                    - cargos
+            list:
+                collapse_actions: true
+                actions: ['show', 'edit', 'delete']
+                batch_actions: ['delete']
+                title: "Lista de las departamentos"
+                filters: ['created']
+            show:
+                fields:
+                    - nombre
+                    - area
+                    - cargos
+                    - {property: 'content', type: 'raw'}
+                    - created
+                    - updated
+            edit:
+                help: "Ayuda"
+                fields:
+                    - '-cargos'
+
+
+        Organismo:
+            class: App\Entity\Organismo
+        Cargo:
+            class: App\Entity\Cargo
+            form:
+                fields:
+                    - nombre
+                    - pagoAdicional
+        User:
+            class: App\Entity\Usuario

@@ -1,0 +1,45 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Tipos de equipos',
+        'link' : {
+            'new' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('equipo_tipo_new') : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <table id="datos-multi-select-all" class="table table-xs">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th data-sortable="false"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entity in equipo_tipos %}
+                <tr>
+                    <td>{{ entity.nombre }}</td>
+                    <td>{{ entity.descripcion }}</td>
+                    <td>
+                        <ul>
+                            {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                                'link' : {
+                                    'show' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('equipo_tipo_show', { 'id': entity.id }) : '#',
+                                    'edit' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('equipo_tipo_edit', { 'id': entity.id }) : '#',
+                                    'delete' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('equipo_tipo_delete', { 'id': entity.id }) : '#'
+                                },
+                                'delete_id' : entity.id
+                            }) }}
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}

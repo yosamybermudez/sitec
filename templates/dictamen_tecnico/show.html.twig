@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<title>DictamenTecnico</title>
+
+{% block body %}
+    <h1>DictamenTecnico</h1>
+
+    <table class="table table-xs">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ dictamen_tecnico.id }}</td>
+            </tr>
+            <tr>
+                <th>Precio</th>
+                <td>{{ dictamen_tecnico.precio }}</td>
+            </tr>
+            <tr>
+                <th>DejarEnTaller</th>
+                <td>{{ dictamen_tecnico.dejarEnTaller ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Dictamen</th>
+                <td>{{ dictamen_tecnico.dictamen }}</td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{{ dictamen_tecnico.created ? dictamen_tecnico.created|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{{ dictamen_tecnico.updated ? dictamen_tecnico.updated|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

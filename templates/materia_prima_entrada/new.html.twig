@@ -1,0 +1,186 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block form_start %}
+    <div id="materiales-registrados-protoype" style="display: none;">
+        <table>
+            <tbody>
+            <tr class="materia-prima-row">
+                <td>
+                    <div class="w-100 md-form">
+                        <select type="text" id="materiaprima_registrada___name___materiaprima" name="materiaprima_registrada[__name__][materiaprima]" required="required" class="form-control-sm form-control" searchable="Buscar">
+                            <option value="">Seleccione</option>
+                            {% for mr in materiales_registrados %}
+                                <option value="{{ mr.id }}">{{ mr.nombrePrecio }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </td>
+                <td><input type="text" id="materiaprima_registrada___name___cantidad" name="materiaprima_registrada[__name__][cantidad]" required="required" class="form-control form-control-sm"></td>
+                <td><button id="materiaprima_registrada___name___remove" type="button" name="materiaprima_registrada[__name__][remove]" required="required" class="btn btn-sm btn-danger remove-btn-registrado"><span class="glyphicon glyphicon-trash"></span></button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="materiales-no-registrados-protoype" style="display: none;">
+        <table>
+            <tbody>
+                <tr class="materia-prima-row">
+                    <td><input type="text" id="materiaprima___name___nombre" name="materiaprima[__name__][nombre]" required="required" class="form-control form-control-sm"></td>
+                    <td><input type="text" id="materiaprima___name___cantidad" name="materiaprima[__name__][cantidad]" required="required" class="form-control form-control-sm"></td>
+                    <td><input type="text" id="materiaprima___name___unidadmedida" name="materiaprima[__name__][unidadmedida]" required="required" class="form-control form-control-sm" value="U"></td>
+                    <td>
+                        <select type="text" id="materiaprima___name___tipoequipo" name="materiaprima[__name__][tipoequipo]" required="required" class="form-control form-control-sm">
+                            <option value="">Seleccione</option>
+                            {% for te in tipos_equipo %}
+                                <option value="{{ te.id }}">{{ te.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td><input type="text" id="materiaprima___name___precio" name="materiaprima[__name__][precio]" required="required" class="form-control form-control-sm text-right"></td>
+                    <td><button id="materiaprima___name___remove" type="button" name="materiaprima[__name__][remove]" required="required" class="btn btn-sm btn-danger remove-btn-no-registrado"><span class="glyphicon glyphicon-trash"></span></button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {{ form_start(form) }}
+{% endblock %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Entrada de materias primas',
+        'link' : {
+            'back' : path('materia_prima_entrada_index'),
+            'submit' : 'Confirmar'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                <div class="clearfix">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 md-form">
+                            {{ form_row(form.realizadaPor   , {'attr' : {'class' : 'mdb-select md-form', 'searchable' : 'Buscar'}}) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 md-form">
+                            {{ form_row(form.vendedorNombre) }}
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 md-form">
+                            {{ form_row(form.vendedorCarneIdentidad) }}
+                        </div>
+                    </div>
+                    <div class="row materiales">
+                        <div class="col-12 mb-3" id="materiales-registrados">
+                            <h5>Materiales registrados</h5>
+                            <table id="materiales-registrados-table" class="table table-xs">
+                                <thead>
+                                <th width="60%">Nombre</th>
+                                <th width="40%">Cantidad</th>
+                                <th><button type="button"
+                                            class="add-another-collection-widget-material-registrado btn btn-sm btn-primary"
+                                            data-list-selector="#materiales-registrados-list"
+                                    ><span class="glyphicon glyphicon-plus"></span> </button></th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-12 mb-3" id="materiales-no-registrados">
+                            <h5>Materiales no registrados</h5>
+                            <table id="materiales-no-registrados-table" class="table table-xs">
+                                <thead>
+                                    <th width="40%">Nombre</th>
+                                    <th width="12%">Cantidad</th>
+                                    <th width="7%">U/M</th>
+                                    <th width="25%">Equipos destino</th>
+                                    <th width="30%">Precio Unit.</th>
+                                    <th><button type="button"
+                                                class="add-another-collection-widget-material-no-registrado btn btn-sm btn-primary"
+                                                data-list-selector="#materiales-no-registrados-list"
+                                        ><span class="glyphicon glyphicon-plus"></span> </button></th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block form_end %}
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block script %}
+    <script>
+        $('button[name="save"]').click(function () {
+            if($('#materia_prima_entrada_realizadaPor').val() === ''){
+                showToastMessage('danger','Especifique la persona que realiza la operación', '2000');
+                return false;
+            }
+            if($('.materiales .materia-prima-row').length == 0){
+                showToastMessage('danger','Tiene que especificar al menos una materia prima', '2000');
+                return false;
+            }
+        });
+        function showAlert(text, type) {
+            $('div.white').prepend('<div class="alert alert-' + type + ' fade show" role="alert">' + text + '</div>');
+            $('.alert').alert();
+            window.scrollTo(0,0);
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 3000);
+        }
+        $('.add-another-collection-widget-material-registrado').click(function () {
+            var cantidad = {{ materiales_registrados | length }};
+            var list = $('#materiales-registrados-table tbody');
+            var counter = $('#materiales-registrados .remove-btn-registrado').length;
+            if(counter < cantidad){
+                var newWidget = $('#materiales-registrados-protoype table tbody').html();
+                newWidget = newWidget.replace(/__name__/g, counter);
+                counter++;
+                if(counter === cantidad){
+                    $(this).css('display','none');
+                } else {
+                    $(this).css('display','block');
+                }
+                list.data('widget-counter', counter);
+                var newElem = $(list.attr('data-widget-tags')).html(newWidget);
+                list.append(newWidget);
+            } else {
+                $(this).css('display','none');
+            }
+        });
+        $('.add-another-collection-widget-material-no-registrado').click(function () {
+            var list = $('#materiales-no-registrados-table tbody');
+            var counter = $('#materiales-no-registrados .remove-btn-no-registrado').length;
+            var newWidget = $('#materiales-no-registrados-protoype table tbody').html();
+            newWidget = newWidget.replace(/__name__/g, counter);
+            counter++;
+            list.append(newWidget);
+        });
+
+        $(document).on('click','.remove-btn-registrado',function () {
+            var cantidad = {{ materiales_registrados | length }};
+            $(this).closest('tr').remove();
+            var counter = $('#materiales-registrados .remove-btn-registrado').length;
+            if(counter !== cantidad){
+                $('.add-another-collection-widget-material-registrado').css('display','block');
+            } else {
+                $('.add-another-collection-widget-material-registrado').css('display','none');
+            }
+        });
+
+        $(document).on('click','.remove-btn-no-registrado',function () {
+            $(this).closest('tr').remove();
+        });
+    </script>
+
+{% endblock %}

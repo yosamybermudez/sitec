@@ -1,0 +1,190 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Jornada de trabajo. Día ' ~ jornada.fecha | date('d/m/Y'),
+        'link' : {
+            'back' : path('app_module_taller'),
+            'personalized' : jornada.estado == 'Vigente' ? {
+                'path' : is_granted('ROLE_RECEPCIONISTA') ? path('orden_trabajo_new') : '#',
+                'icon' : 'plus',
+                'text' : 'Nueva orden de trabajo'
+            } : '#',
+            'reservac' : path('orden_trabajo_reservar'),
+            'ops' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? {
+                'edit' : path('jornada_edit', { 'id': jornada.id }),
+                'delete' : null
+            } : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+
+    <div class="white">
+            <!-- Tabs navs -->
+            {%  set param = app.request.get('info') %}
+            <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a
+                            class="nav-link{{ param == null ? ' active' : ''}}"
+                            id="ex3-tab-1"
+                            data-mdb-toggle="tab"
+                            href="{{ path('jornada_show', { 'id' : jornada.id }) }}"
+                            role="tab"
+                            aria-controls="ex3-tabs-1"
+                            aria-selected="true"
+                    >Órdenes de trabajo</a
+                    >
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a
+                            class="nav-link{{ param == '1' ? ' active' : ''}}"
+                            id="ex3-tab-1"
+                            data-mdb-toggle="tab"
+                            href="{{ path('jornada_show', { 'id' : jornada.id, 'info' : 1}) }}"
+                            role="tab"
+                            aria-controls="ex3-tabs-1"
+                            aria-selected="true"
+                    >Eventos del día</a
+                    >
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a
+                            class="nav-link{{ param == '2' ? ' active' : ''}}"
+                            id="ex3-tab-2"
+                            data-mdb-toggle="tab"
+                            href="{{ path('jornada_show', { 'id' : jornada.id, 'info' : 2 }) }}"
+                            role="tab"
+                            aria-controls="ex3-tabs-2"
+                            aria-selected="false"
+                    >Datos de la jornada</a
+                    >
+                </li>
+                {% if jornada.estado == 'Vigente' %}
+                    {% if tecicosFuera | length > 0 %}
+                        <li class="nav-item" role="presentation">
+                            <a
+                                    class="nav-link{{ param == '3' ? ' active' : ''}}"
+                                    id="ex3-tab-2"
+                                    data-mdb-toggle="tab"
+                                    href="{{ path('jornada_show', { 'id' : jornada.id, 'info' : 3 }) }}"
+                                    role="tab"
+                                    aria-controls="ex3-tabs-2"
+                                    aria-selected="false"
+                            >Entrada de técnicos</a
+                            >
+                        </li>
+                    {% endif %}
+                    {% if is_granted('ROLE_ADMINISTRACION') %}
+                        <li class="nav-item" role="presentation">
+                        <a
+                                onclick="return confirm('¿Está seguro de cerrar la jornada?');"
+                                class="nav-link bg-primary text-white"
+                                id="ex3-tab-2"
+                                href="{{ path('jornada_cerrar', { 'id' : jornada.id }) }}"
+                                aria-controls="ex3-tabs-2"
+                                aria-selected="false"
+                        ><span class="glyphicon glyphicon-off"></span> Cerrar jornada</a
+                        >
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+            <!-- Tabs navs -->
+        {% if param == null %}
+            <div class="col-lg-12 mb-3">
+                {% include 'orden_trabajo/index-Table.html.twig' %}
+            </div>
+        {% endif %}
+        {% if param == '1' %}
+            <div class="col-lg-12 mb-3">
+                <table id="datos-multi-select-desc-0" class="table table-xs">
+                    <thead>
+                    <th>Hora</th>
+                    <th>Evento</th>
+                    <th>Usuario</th>
+                    </thead>
+                    <tbody>
+                    {% for evento in eventos %}
+                        <tr>
+                            <td data-order="{{ evento.created | date('YmdHis') }}" style="white-space: nowrap;">{{ evento.created | date('h:i:s a') }}</td>
+                            <td>{{ evento.texto }}</td>
+                            <td>{{ evento.createdBy.username }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        {% if param == '2' %}
+            <div class="col-lg-12 mb-3" style="border-bottom: 2px solid #dee2e6;">
+                <div class="row">
+                    <div class="col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                        <div class="mb-2"><div class="text-primary fw-500">
+                                Fondo inicial</div> $ {{ jornada.fondoInicial | number_format(2,'.',' ') }}
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                        <div class="mb-2"><div class="text-primary fw-500">
+                                Fondo actual</div> $ {{ jornada.fondoActual | number_format(2,'.',' ') }}
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-4 col-sm-12 col-xs-12">
+{#                        <a class="btn btn-sm btn-primary pull-right" href="{{ path('operacion_contable_filtar_hoy') }}">Operaciones</a>#}
+{#                        <a class="btn btn-sm btn-primary pull-right" href="{{ path('comprobante_operacion_jornada_hoy') }}">Comprobantes</a>#}
+                        <a class="btn btn-sm btn-primary pull-right" href="{{ path('jornada_show', {'id': jornada.id, 'fake_closed': true}) }}">Visualizar jornada cerrada</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <ul class="stepper stepper-horizontal">
+                        <li class="completed">
+                            <a>
+                                <span class="circle">{{ orden_trabajos | length }}</span>
+                                <span class="label">Ordenes registradas hoy</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% if jornada.estado == 'Vigente' %}
+            <div class="col-lg-12" style="border-bottom: 2px solid #dee2e6;">
+
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="mb-2"><div class="text-primary fw-500 mb-4">
+                                Técnicos disponibles</div>
+                            {% for registro in jornada.registrosAsistencia %}
+                                {% if not registro.horaSalida %}
+                                    <div class="chip waves-effect waves-effect">
+                                        {{ registro.tecnico.nombreCompleto }}
+                                        <a onclick="return confirm('¿Está seguro(a) de la acción a realizar?')" class="chip-close fa fa-times" href="{{ path('jornada_salida_trabajador', {'id': registro.tecnico.id }) }}"></a>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endif %}
+        {% if param == '3' and jornada.estado == 'Vigente' %}
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="mb-2">
+                        <div class="text-primary fw-500 mb-2">
+                            Entrada de técnicos
+                        </div>
+                        <p><small>Permite registrar la entrada de los técnicos que se presenten después de iniciada la jornada laboral</small></p>
+                        {% for tecnico in tecicosFuera %}
+                            <div class="chip waves-effect waves-effect bg-primary text-white">
+                                {{ tecnico.nombreCompleto }}
+                                <a onclick="return confirm('¿Está seguro(a) de la acción a realizar?')" class="chip-close fa fa-plus text-white" href="{{ path('jornada_entrada_trabajador', {'id': tecnico.id }) }}"></a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

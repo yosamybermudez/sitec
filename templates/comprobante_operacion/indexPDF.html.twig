@@ -1,0 +1,57 @@
+{% extends 'assets_views/document.html.twig' %}
+
+{% set footer = 'Servicios Integrales Tecnológicos – Esquina de Tejas entre 10 de octubre y San Joaquín – Teléfono: 78795048' %}
+
+{% block document %}
+    <div class="nav-item ml-auto font-small pr-4 pb-2 pull-right">
+    </div>
+        <table id="datos-multi-select-all" class="table table-xs">
+        <thead>
+            <tr>
+                <th colspan="7">
+                    <table class="table-bordered" style="background-color: white; table-layout: fixed; width: 100%;">
+                        <tr>
+                            <td rowspan="3" colspan="1" class="p-3 pb-0">
+                                <img src="{{ app.request.schemeAndHttpHost }}{{ asset('assets/institucional/sitec-logo-horizontal.jpg') }}" style="width: 100%;">
+                            </td>
+                            <td rowspan="3" colspan="4" class="text-blue-sitec p-3 pb-0" style="font-weight: bold; text-transform: uppercase; font-size: 20px; text-align: center;">
+                                <h3>Comprobantes de operaciones. Fecha: {{ fecha }}</h3>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="text-center p-1 institucional-text"><small>{{ footer }}</small></div>
+                </th>
+            </tr>
+            <tr>
+                <th>Fecha</th>
+                <th>Nro. Comprobante</th>
+                <th>Tipo de operación</th>
+                <th>Equipo</th>
+                <th>Importe total</th>
+                <th>Gasto total</th>
+                <th>Técnico</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for comprobante_operacion in comprobante_operacions %}
+            <tr>
+                <td style="white-space: nowrap;" data-order="{{ comprobante_operacion.created | date('YmdHis') }}">{{ comprobante_operacion.created | date('d/m/Y h:i:s a') }}</td>
+                <td>{{ comprobante_operacion.nroComprobante }}</td>
+                <td style="white-space: nowrap;">{{ comprobante_operacion.tipoOperacion }}<br>{{ comprobante_operacion.ordenTrabajo.nroOrden }}</td>
+                <td>{{ comprobante_operacion.ordenTrabajo.datosEquipo}}</td>
+                <td class="text-right" style="white-space: nowrap;">$ {{ comprobante_operacion.importeTotal | number_format(2,'.',' ') }}</td>
+                <td class="text-right" style="white-space: nowrap;">$ {{ comprobante_operacion.gastosAsociados | number_format(2,'.',' ') }}</td>
+                <td>{{ comprobante_operacion.ordenTrabajo.ordenReparacion.revisadoPor.nombreCompleto }}</td>
+            </tr>
+        {% endfor %}
+        {% if ingreso is defined and gasto is defined %}
+            <tr>
+                <td colspan="4" class="text-right pr-3">Totales finales</td>
+                <td class="text-right bold no-wrap"> $ {{ ingreso | number_format(2,'.',' ') }}</td>
+                <td class="text-right bold no-wrap"> $ {{ gasto | number_format(2,'.',' ') }}</td>
+                <td></td>
+            </tr>
+        {% endif %}
+        </tbody>
+        </table>
+{% endblock %}

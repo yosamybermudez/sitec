@@ -1,0 +1,1 @@
+composer require laminas/laminas-eventmanager laminas/laminas-code symfony/ldap phpoffice/phpspreadsheet knplabs/knp-snappy riper/security-active_directory easycorp/easyadmin-bundle -vvv

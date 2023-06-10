@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{{ system_title }}</title>
+    <!-- MDB icon -->
+    <link rel="shortcut icon" href="{{ asset('assets/favicon.png') }}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('assets/fonts/fontawesome/fontawesome.css') }}">
+    <!-- Bootstrap core CSS -->
+    <link href="{{ asset('assets/mdb4pro/css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{{ asset('assets/mdb4pro/css/mdb.min.css') }}" rel="stylesheet">
+    <!-- Custom Design -->
+    <link href="{{ asset('assets/mdb4pro/css/styles-login.css') }}" rel="stylesheet">
+</head>
+
+<body style="overflow: hidden;">
+{% if miEmpresa.wallpaper is defined %}
+    <img id="wallpaper" src="{{ asset('images/') }}{{ miEmpresa.wallpaper }}">
+{% endif %}
+    <!--Intro Section-->
+    <section class="view intro-2" style="position: unset;">
+        <div class="mask rgba-stylish-strong h-100 d-flex justify-content-center align-items-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-5 col-lg-6 col-md-10 col-sm-12 mx-auto mt-lg-5">
+                        <!--Form with header-->
+                        <form method="post">
+                        <div class="card wow fadeIn" data-wow-delay="0.3s">
+                            <div class="card-body">
+
+                                <!--Header-->
+                                <div class="form-header blue-gradient">
+                                    <h3><i class="fas fa-user mt-2 mb-2"></i> Inicie sesión</h3>
+                                </div>
+                                {% if error %}
+                                    <div class="alert alert-danger alert-dismissible fade show text-center mb-2" role="alert">
+                                        <strong>¡Error!</strong> {{ error.message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% endif %}
+                                <!--Body-->
+                                <div class="md-form">
+
+                                    <input name="_username" type="text" id="orangeForm-username" class="form-control">
+                                    <label for="orangeForm-username">Usuario</label>
+                                </div>
+
+                                <div class="md-form">
+
+                                    <input name="_password" type="password" id="orangeForm-pass" class="form-control">
+                                    <label for="orangeForm-pass">Contraseña</label>
+                                </div>
+
+                                <div class="md-form">
+
+                                    <select name="_domain" class="mdb-select colorful-select dropdown-primary">
+                                        <option value="local">Local</option>
+                                        {% for l in ldap_servers %}
+                                            <option value="{{ l.id }}">{{ l.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label>Dominio</label>
+                                </div>
+
+                                <div class="text-center">
+                                    <button class="btn blue-gradient btn-lg" type="submit">Iniciar</button>
+                                </div>
+                                <input type="hidden" name="_csrf_token"
+                                       value="{{ csrf_token('authenticate') }}"
+                                >
+                            </div>
+                        </div>
+                        </form>
+                        <!--/Form with header-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<!--  SCRIPTS  -->
+<!-- JQuery -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/jquery.js') }}"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/popper.min.js') }}"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/bootstrap.min.js') }}"></script>
+<!-- My custom JS -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/custom.samy.js') }}"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/mdb.min.js') }}"></script>
+<!-- Document ready -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/mdb.document.login.ready.js') }}"></script>
+<script type="text/javascript">
+    new WOW().init();
+    {% if app.flashes is defined %}
+    {% for label, messages in app.flashes %}
+    {% for flash_message in messages %}
+        var a = '{{ flash_message }}';
+        showToastMessage('{{ label }}','{{ flash_message }}', a.length > 50 ? 5000 : 2000);
+    {% endfor %}
+    {% endfor %}
+    {% endif %}
+
+
+</script>
+</body>
+
+</html>

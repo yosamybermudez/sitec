@@ -1,0 +1,65 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Comprobante de la operación',
+        'link' : {
+            'back' : path('jornada_show_hoy'),
+            'personalized' : {
+                'path':  path('orden_trabajo_modelo_entrega', {'id' : comprobante_operacion.ordenTrabajo.id }),
+                'icon' : 'print',
+                'text' : 'Imprimir modelo',
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <table class="table no-first-border table-xs">
+        <tbody>
+        <tr>
+            <th>Fecha</th>
+            <td>{{ comprobante_operacion.created | date('d/m/Y h:i:s a') }}</td>
+        </tr>
+            <tr>
+                <th>Nro. Comprobante</th>
+                <td>{{ comprobante_operacion.nroComprobante }}</td>
+            </tr>
+            <tr>
+                <th>Tipo de operación</th>
+                <td>{{ comprobante_operacion.tipoOperacion }}</td>
+            </tr>
+            {% if comprobante_operacion.ordenTrabajo %}
+                <tr>
+                    <th>Orden de trabajo</th>
+                    <td>{{ comprobante_operacion.ordenTrabajo.nroOrden }} <a href="{{ path('orden_trabajo_show', {'id' : comprobante_operacion.ordenTrabajo.id }) }}" class="btn btn-sm btn-primary ml-2 pull-right">Ver orden de trabajo</a></td>
+                </tr>
+            {% endif %}
+            {% if comprobante_operacion.ordenTrabajo %}
+                <tr>
+                    <th>Orden de reparación</th>
+                    <td>OR_{{ comprobante_operacion.ordenTrabajo.nroOrden }} <a href="{{ path('orden_reparacion_show', {'id' : comprobante_operacion.ordenTrabajo.ordenReparacion.id }) }}" class="btn btn-sm btn-primary ml-2 pull-right">Ver orden de reparación</a></td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th>Importe total</th>
+                <td>$ {{ comprobante_operacion.importeTotal | number_format(2,'.',' ') }}</td>
+            </tr>
+            <tr>
+                <th>Importe pagado</th>
+                <td>$ {{ comprobante_operacion.importePagado | number_format(2,'.',' ') }}</td>
+            </tr>
+            <tr>
+                <th>Gastos asociados</th>
+                <td>$ {{ comprobante_operacion.gastosAsociados | number_format(2,'.',' ') }}</td>
+            </tr>
+            <tr>
+                <th>Devolución</th>
+                <td>$ {{ (comprobante_operacion.importePagado - comprobante_operacion.importeTotal) | number_format(2,'.',' ') }}</td>
+            </tr>
+        </tbody>
+    </table>
+    {{ include('_mdb/mdb_metadata.html.twig', {'elem' : comprobante_operacion}) }}
+</div>
+{% endblock %}

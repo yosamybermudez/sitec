@@ -1,0 +1,79 @@
+﻿<section class="content-header">
+    <div class="d-flex flex-row justify-content-between align-content-center w-100">
+        <div class="content-header-title">
+            <h3 class="title">
+                {% if title is defined %}{{ title }}{% endif %}
+            </h3>
+        </div>
+        {% if link is defined %}
+        <div class="page-actions">
+            {% if link['new'] is defined and link['new'] != "#" %}<a class="btn btn-sm btn-primary float-right btn-load act-spinner" href="{{ link['new'] }}"><i class="fa fa-plus"></i></a>{% endif %}
+            {% if link['reservac'] is defined and link['reservac'] != "#" %}<a class="btn btn-sm btn-primary float-right btn-load act-spinner" href="{{ link['reservac'] }}"><i class="glyphicon glyphicon-calendar"></i> Reservac.</a>{% endif %}
+            {% if link['back'] is defined and link['back'] != "#" %}<a class="btn btn-secondary btn-sm float-right btn-load act-spinner" href="{{ link['back'] }}"><i class="glyphicon glyphicon-list"></i> Ir a la lista</a>{% endif %}
+            {% if link['backward'] is defined and link['backward'] != "#" %}<a class="btn btn-secondary btn-sm float-right btn-load act-spinner" href="{{ link['backward'] }}"><i class="glyphicon glyphicon-arrow-left"></i> Volver</a>{% endif %}
+            {% if link['personalized'] is defined and link['personalized'] != "#"%}<a class="btn btn-primary btn-sm float-right btn-load act-spinner" href="{{ link['personalized']['path'] }}"><i class="glyphicon glyphicon-{{ link['personalized']['icon'] }}"></i> {{ link['personalized']['text'] }}</a>{% endif %}
+            {% if link['submit'] is defined and multiple is not defined and link['submit'] != "#" %}<button class="btn btn-primary btn-sm" type="submit" name="save">{{ link['submit'] }}</button>{% endif %}
+            {% if multiple is defined %}
+                <div class="btn-group">
+                    <div class="btn-group" role="group">
+                        <button type="submit" class="btn btn-primary btn-sm" name="saveAndShow">{{ link['submit'] }} y mostrar</button>
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle px-3" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-option">
+                            <button class="dropdown-item" type="submit" name="saveAndNew">{{ link['submit'] }} y añadir otro</button>
+                            {% if referer != app.request.uri and referer != ''%}
+                                <button class="dropdown-item" type="submit" name="saveAndBack">{{ link['submit'] }} y volver</button>
+                            {% endif %}
+                        </div>
+                    </div>
+
+
+                </div>
+            {% endif %}
+            {% if (link['ops'] is defined or link['aux'] is defined) and (link['ops'] != '#') %}
+            <div class="dropdown float-right">
+                <a class="btn btn-info btn-sm dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false"> Operaciones </a>
+                <div class="dropdown-menu dropdown-primary">
+                    {# SHOW #}
+                    {% if link['ops']['edit'] is defined and link['ops']['edit'] != "#" %}<a class="dropdown-item btn-load act-spinner" href="{{ link['ops']['edit'] }}"><i class="glyphicon glyphicon-pencil text-secondary mr-2"></i>Editar </a>{% endif %}
+                    {% if link['ops']['preview'] is defined and link['ops']['preview'] != "#" %}<a class="dropdown-item" data-toggle="modal" href="#previewModal" ><i class="glyphicon glyphicon-search text-info mr-2"></i>Vista impresión</a>{% endif %}
+                    {% if link['ops']['delete'] is defined and link['ops']['delete'] != "#" %}<a class="dropdown-item" data-toggle="modal" href="#confirmFullDeleteModal" ><i class="glyphicon glyphicon-trash text-danger mr-2" title="Eliminar completamente"></i>Eliminar</a>{% endif %}
+                    {# SHOW / INDEX #}
+                    {% if link['ops']['print'] is defined and link['ops']['print'] != "#" %}<a class="dropdown-item btn-load act-spinner" href="{{ link['ops']['print'] }}"><i class="fa fa-print text-warning mr-2"></i>Imprimir</a>{% endif %}
+                    {% if link['ops']['export'] is defined and link['ops']['export'] != "#" %}<a class="dropdown-item btn-load act-spinner" href="{{ link['ops']['export'] }}"><i class="glyphicon glyphicon-export text-info mr-2"></i>Exportar</a>{% endif %}
+                    {# INDEX #}
+                    {% if link['ops']['import'] is defined and link['ops']['import'] != "#" %}<a class="dropdown-item btn-load act-spinner" href="{{ link['ops']['import'] }}"><i class="glyphicon glyphicon-import text-info mr-2"></i>Importar</a>{% endif %}
+                    {% if link['aux'] is defined and link['aux'] != "#" %}
+                        {% for l in link['aux'] %}
+                            {% if l != '#' %}
+                                <a class="dropdown-item btn-load act-spinner" href="{{ l['link'] }}"><i class="glyphicon glyphicon-{{ l['icon'] }} text-secondary mr-2"></i>{{ l['text'] }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            {% if link['options'] is defined and link['options'] != "#" %}
+                <div class="dropdown float-right">
+                    <a class="btn btn-info btn-sm dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">{{ link['options']['name']  }}</a>
+                    <div class="dropdown-menu dropdown-primary">
+                        {{ link['options']['links'] | raw }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if link['next'] is defined and link['next'] != "#" %}<a class="btn btn-secondary btn-sm float-right btn-load act-spinner" href="{{ link['next'] }}">Continuar  <i class="glyphicon glyphicon-arrow-right"></i></a>{% endif %}
+            {% if link['next-submit'] is defined and link['next-submit'] != "#" %}<button class="btn btn-secondary btn-sm float-right btn-load act-spinner" type="submit">Continuar  <i class="glyphicon glyphicon-arrow-right"></i></button>{% endif %}
+            {% if link['jornada_anterior'] is defined or link['jornada_siguiente'] is defined %}
+                <a class="btn btn-sm btn-outline-primary float-right btn-load act-spinner{% if link['jornada_siguiente'] != '#' %}" href="{{ link['jornada_siguiente'] }}"{% else %} disabled"{% endif %}><i class="fa fa-chevron-right"></i></a>
+                <a class="btn btn-sm btn-outline-primary float-right btn-load act-spinner{% if link['jornada_anterior'] != '#' %}" href="{{ link['jornada_anterior'] }}"{% else %} disabled"{% endif %}><i class="fa fa-chevron-left"></i></a>
+            {% endif %}
+
+        </div>
+        {% endif %}
+    </div>
+    {% if referer is defined %}<input type="hidden" name="referer" value="{{ referer }}">{% endif %}
+</section>

@@ -1,0 +1,136 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block form_start %}
+    {{ form_start(form) }}
+{% endblock %}
+
+{% block head %}
+    <style type="text/css">
+        legend{
+            display: none;
+        }
+
+        .material div.form-group:nth-child(1),
+        .material div.form-group:nth-child(2){
+            -ms-flex: 0 0 40%;
+            flex: 0 0 40%;
+            max-width: 40%;
+            margin: 0;
+            margin-bottom: 5px;
+        }
+
+        fieldset.form-group{
+            margin-bottom: 0px;
+        }
+
+        .materiales-usados tr td:first-child{
+            padding-top: 7px!important;
+        }
+        .materiales-usados td{
+            padding: 5px!important;
+        }
+
+        .materiales-usados div.md-form{
+            margin: 0!important;
+        }
+    </style>
+{% endblock %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Materiales usados',
+        'link' : {
+            'submit' : 'Confirmar',
+            'back' : path('homepage'),
+        }
+    }) }}
+{% endblock %}
+
+{% block script %}
+<script>
+    $('.mdb-select').removeClass('form-control');
+    $('.mdb-select').addClass('w-100');
+    $('#counter').html($('.material-usado').length);
+    $('.material-usado').clone().insertAfter('.material-usado');
+    $('.add-another-collection-widget').click(function (e) {
+       var cantidad = {{ cantidad_mp }};
+       var list = $($(this).attr('data-list-selector'));
+        var counter = $('.remove-btn').length;
+       if(counter < cantidad){
+           var newWidget = list.attr('data-prototype');
+           newWidget = newWidget.replace(/__name__/g, counter);
+           counter++;
+           if(counter === cantidad){
+               $(this).css('display','none');
+           } else {
+               $(this).css('display','block');
+           }
+           list.data('widget-counter', counter);
+           var newElem = $(list.attr('data-widget-tags')).html(newWidget);
+           newElem.appendTo(list);
+       } else {
+           $(this).css('display','none');
+       }
+
+    });
+    $('button[name="save"]').click(function () {
+        var arr = new Array();
+        $('select.select-mp').each(function () {
+            arr.push($(this).val());
+        });
+        if(hasDuplicates(arr)){
+            $('div.white').prepend('<div class="alert alert-danger" role="alert">No puede especificar materiales con el mismo nombre.</div>')
+            $('.alert').alert();
+            return false;
+        }
+    });
+
+    function hasDuplicates(arr){
+        return arr.some(x => arr.indexOf(x) !== arr.lastIndexOf(x));
+    }
+    $(document).on('click','.remove-btn',function () {
+        var counter = $('.remove-btn').length;
+        if(counter === 1){
+            console.log('No se  puede eliminar');
+        } else {
+            if($(this).closest('li').length === 0){
+                $(this).closest('fieldset.form-group').remove();
+            } else {
+                $(this).closest('li').remove();
+            }
+            var counter = $('.remove-btn').length;
+            var cantidad = {{ cantidad_mp }};
+            if(counter !== cantidad){
+                $('.add-another-collection-widget').css('display','block');
+            } else {
+                $('.add-another-collection-widget').css('display','none');
+            }
+        }
+    });
+</script>
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    {% set ot = orden_reparacion.ordenTrabajo %}
+    <div class="my-alert alert-info mb-3">Registre los materiales utilizados para la reparación del {{ ot.datosEquipo }}, correspondiente a la Orden de Trabajo # {{ ot.nroOrden }}.</div>
+    <ul id="materiales" style="list-style: none;"
+        data-prototype="{{ form_widget(form.movimientosMateriaPrima.vars.prototype)|e }}"
+        data-widget-tags="{{ '<li></li>' | e }}"
+        data-widget-counter="{{ form.movimientosMateriaPrima|length }}"
+    >
+        {% for materiaPrima in form.movimientosMateriaPrima %}
+            {{ form_row(materiaPrima) }}
+        {% endfor %}
+    </ul>
+
+    <button type="button"
+            class="add-another-collection-widget btn btn-sm btn-primary"
+            data-list-selector="#materiales">Añadir otro</button>
+</div>
+{% endblock %}
+
+{% block form_end %}
+{#    {{ form_row(form._token) }}#}
+    {{ form_end(form, {'render_rest' : false}) }}
+{% endblock %}

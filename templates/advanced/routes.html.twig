@@ -1,0 +1,36 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Rutas',
+        'link' : {
+            'backward' : path('app_module_sistema_avanzado')
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <table id="datos-multi-select-all" class="table table-xs">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Método HTTP</th>
+                <th>Controlador</th>
+                <th>Método</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for key, values in routes %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{% for m in values['method'] %} {{ m }} {% else %} - {% endfor %}</td>
+                    <td>{{ values['controller'] }}</td>
+                    <td>{{ values['controller_method'] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}

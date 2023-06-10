@@ -1,0 +1,47 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Cargos',
+        'link' : {
+            'new' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('cargo_new') : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <table id="datos-multi-select-all" class="table table-xs">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Plazas ocupadas</th>
+                <th data-sortable="false"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for cargo in cargos %}
+                <tr>
+                    <td>{{ cargo.nombre }}</td>
+                    <td>{{ cargo.descripcion }}</td>
+                    <td>{{ cargo.plazasOcupadas | length }}</td>
+                    <td>
+                        <ul>
+                            {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                                'link' : {
+                                    'show' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('cargo_show', { 'id': cargo.id }) : '#',
+                                    'edit' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('cargo_edit', { 'id': cargo.id }) : '#',
+                                    'delete' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('cargo_delete', { 'id': cargo.id }) : '#'
+                                },
+                                'delete_id' : cargo.id
+                            }) }}
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}

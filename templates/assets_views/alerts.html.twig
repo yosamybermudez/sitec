@@ -1,0 +1,7 @@
+{% block alerts %}
+    {% for flash_message in app.flashes('success') %}
+        <div class="flash-alerts alert alert-info alert-info alert-dismissible fade in" data-auto-dismiss="1000" role="alert">
+            {{ flash_message }}
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,117 @@
+<table id="datos-multi-select-desc-0" class="table table-xs">
+    <thead>
+    <th>No. Orden</th>
+    <th>Fecha/Hora de entrada</th>
+    <th>Nombre(s) y Apellidos / Carné identidad / Télefono (Cliente)</th>
+    <th>Equipo</th>
+    <th>Motivo visita</th>
+    <th>Asignada a</th>
+    <th>Estado</th>
+    <th>Dias en taller / Dias notific.</th>
+    <th data-orderable="false"></th>
+    </thead>
+    <tbody>
+    {% for orden_trabajo in orden_trabajos %}
+        <tr class="{{ orden_trabajo.estado == 'EAC' and orden_trabajo.observacionesFinales == 'R' ? 'alert-success'
+        : orden_trabajo.estado in ['LE', 'N'] and orden_trabajo.observacionesFinales == 'R' ? 'alert-info'
+        : orden_trabajo.estado in ['EP', 'DT'] ? 'alert-secondary'
+        : orden_trabajo.estado in ['RES'] ? 'alert-light'
+        : orden_trabajo.estado == 'CF' or ((orden_trabajo.observacionesFinales is not null or orden_trabajo.observacionesFinales != 'R') and orden_trabajo.estado not in ['ESP', 'TR', 'ECT']) ? 'alert-danger' : '' }}">
+            <td>{{ orden_trabajo.nroOrden }}</td>
+            <td data-order="{{ orden_trabajo.fechaEntrada|date('YmdHis') }}">{{ orden_trabajo.fechaEntrada ? orden_trabajo.fechaEntrada|date('d/m/Y h:i:s a') : '' }}</td>
+            <td>{{ orden_trabajo.clienteNombreCompleto }} / {{ orden_trabajo.clienteCarneIdentidad }} / {{ orden_trabajo.clienteTelefonosContacto }}</td>
+            <td>{{ orden_trabajo.equipoTipo.nombre }} / {{ orden_trabajo.equipoMarca }} {{ orden_trabajo.equipoModelo }}</td>
+            <td>{{ orden_trabajo.motivoVisita }}</td>
+            <td>{% if orden_trabajo.tecnicoRepara %}{{ orden_trabajo.tecnicoRepara.nombres }}{% else %}Sin asignación{% endif %}</td>
+            <td>{{ orden_trabajo.estado | traducirSiglas }}
+                {% if orden_trabajo.estado in ['ESP', 'ECT'] %}
+                    {% set tiempoEspera = date(orden_trabajo.fechaEntrada|date('Y/m/d h:i:s')).diff(date('now'|date('Y/m/d h:i:s'))) %}
+                    <span class="glyphicon glyphicon-time"></span>: ({{ tiempoEspera.h }}h {{ tiempoEspera.i }}m {{ tiempoEspera.s }}s)
+                {% endif %}
+                {% if orden_trabajo.estado == 'CF' %}
+                    {% set tiempoEsperado = date(orden_trabajo.fechaEntrada|date('Y/m/d h:i:s')).diff(date(orden_trabajo.fechaSalida|date('Y/m/d h:i:s'))) %}
+                    <span class="glyphicon glyphicon-info-sign"></span>: ({{ tiempoEsperado.h }}h {{ tiempoEsperado.i }}m {{ tiempoEsperado.s }}s)
+                {% endif %}
+                {{ orden_trabajo.observacionesFinales is null ? '' : orden_trabajo.observacionesFinales == 'R' ? '<span class="text-success glyphicon glyphicon-ok"></span>' : '<span class="text-danger glyphicon glyphicon-remove"></span>' }}
+            <td>
+                {% if not orden_trabajo.fechaSalida %}
+                    {% set diasEnTaller = date(orden_trabajo.fechaEntrada|date('Y/m/d')).diff(date('now'|date('Y/m/d'))) %}
+                {% else %}
+                    {% set diasEnTaller = date(orden_trabajo.fechaEntrada|date('Y/m/d')).diff(date(orden_trabajo.fechaSalida|date('Y/m/d')|date('Y/m/d'))) %}
+                {% endif %}
+                {% if diasEnTaller.invert %} No ha entrado {% else %} {{ diasEnTaller.days }} día{% if diasEnTaller.days != 1 %}s{% endif %}{% endif %}
+                {% if orden_trabajo.estado == 'N' %}
+                    {% set diasDeRecogida = orden_trabajo.fechaListoEntregar.diff(date('now'|date('Y/m/d'))) %}
+                    / {{ diasDeRecogida.days }} día{% if diasDeRecogida.days != 1 %}s{% endif %}
+                {% endif %}
+            </td>
+            <td>
+                <ul>
+                    {% set diasEnTaller = date(orden_trabajo.fechaEntrada|date('Y/m/d')).diff(date('now'|date('Y/m/d'))) %}
+                    {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                        'link' : {
+                            'show' : is_granted('ROLE_RECEPCIONISTA') ? path('orden_trabajo_show', { 'id': orden_trabajo.id }) : '#',
+                            'edit' : is_granted('ROLE_RECEPCIONISTA') and orden_trabajo.fechaListoEntregar is null and orden_trabajo.estado not in ['CANC'] and (orden_trabajo.dictamenTecnico is null or orden_trabajo.estado == 'AOT')  ? path('orden_trabajo_edit', { 'id': orden_trabajo.id }) : '#',
+                            'delete' : is_granted('ROLE_RECEPCIONISTA') and orden_trabajo.estado in ['ESP', 'RES'] ? path('orden_trabajo_delete', { 'id': orden_trabajo.id }) : '#',
+                            'aux1' : (diasEnTaller.days > 60) ? {
+                                'link' : path('orden_trabajo_decomisar_equipo', {'id' : orden_trabajo.id}),
+                                'text' : 'Decomisar equipo',
+                                'icon' : 'tag'
+                            } : '#',
+                            'aux3' : (orden_trabajo.estado in ['ECT','TR','DT'] and is_granted('ROLE_RECEPCIONISTA') and orden_trabajo.dictamenTecnico is not null) ? {
+                                'link' : path('orden_reparacion_new', {'id' : orden_trabajo.id}),
+                                'text' : 'Registrar datos de la revisión',
+                                'icon' : 'pencil'
+                            } :
+                            (orden_trabajo.estado) == 'RES' ? {
+                                'link' : path('orden_trabajo_cancelar', {'id' : orden_trabajo.id}),
+                                'text' : 'Cancelar',
+                                'icon' : 'remove'
+                            } : '#',
+                            'aux2' :
+                            (orden_trabajo.estado) == 'EAC' ? {
+                                'link' : path('orden_trabajo_modelo_entrega', {'id' : orden_trabajo.id}),
+                                'text' : 'Modelo de entrega',
+                                'icon' : 'print'
+                            } :
+                            ((orden_trabajo.estado in ['ESP','RES']) or (orden_trabajo.estado == 'DT' and orden_trabajo.dictamenTecnico is null)) ? {
+                                'link' : path('dictamen_tecnico_new', {'id' : orden_trabajo.id}),
+                                'text' : 'Dictaminar',
+                                'icon' : 'tag'
+                            } :
+                            (orden_trabajo.estado) == 'LE' and orden_trabajo.dejadoEnTaller == true and ((orden_trabajo.ordenReparacion is not null and orden_trabajo.ordenReparacion.ingreso != 0 and orden_trabajo.dejadoEnTaller == true) or orden_trabajo.fechaEntrada != 'now' | date) ? {
+                                'link' : path('orden_trabajo_notificar_cliente', {'id' : orden_trabajo.id}),
+                                'text' : 'Notificar al cliente',
+                                'icon' : 'comment'
+                            } : (orden_trabajo.estado == 'LE' and orden_trabajo.dejadoEnTaller == false and orden_trabajo.observacionesFinalesConverted == 'NR' and orden_trabajo.garantiaOrdenPrincipal is not null) ? {
+                                'link' : path('orden_trabajo_indemnizar', {'id' : orden_trabajo.id}),
+                                'text' : 'Indemnizar ($ ' ~ orden_trabajo.garantiaOrdenPrincipal.ordenReparacion.ingreso | number_format(2,'.',' ') ~ ')',
+                                'icon' : 'usd'
+                            } : (orden_trabajo.estado == 'C')
+                            or (orden_trabajo.estado == 'N' and orden_trabajo.ordenReparacion.ingreso == 0)
+                            or ((orden_trabajo.estado) == 'LE' and (orden_trabajo.dejadoEnTaller == true or orden_trabajo.ordenReparacion.estadoFinal == 'NR')
+                                    and ((orden_trabajo.ordenReparacion is not null and orden_trabajo.ordenReparacion.ingreso == 0)
+                                            or (orden_trabajo.dictamenTecnico is not null and orden_trabajo.dictamenTecnico.precio == 0))) ? {
+                                'link' : path('orden_trabajo_entregar_equipo', {'id' : orden_trabajo.id}),
+                                'text' : 'Entregar equipo',
+                                'icon' : 'arrow-right'
+                            } : (orden_trabajo.estado == 'LE' and orden_trabajo.dejadoEnTaller == false and orden_trabajo.ordenReparacion.estadoFinal == 'R') or (orden_trabajo.estado == 'N') ? {
+                                'link' : path('orden_trabajo_facturar', {'id' : orden_trabajo.id}),
+                                'text' : 'Facturar ($ ' ~ orden_trabajo.ordenReparacion.ingreso | number_format(2,'.',' ') ~ ')',
+                                'icon' : 'usd'
+                            } : (orden_trabajo.estado in ['ECT','TR']) ? {
+                                'link' : path('orden_trabajo_dejar_en_taller', {'id' : orden_trabajo.id}),
+                                'text' : 'Dejar en taller',
+                                'icon' : 'log-in'
+                            }
+                            : '#'
+                        },
+                        'delete_id' : orden_trabajo.id
+                    }) }}
+                    {{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+                </ul>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

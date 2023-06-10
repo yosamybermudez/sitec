@@ -1,0 +1,263 @@
+body{
+
+    font-family: Arial;
+}
+
+#content table{
+    border: 0px solid white;
+    width: 100%;
+}
+
+#content tr:first-child td{
+    border-top: 1px #000000 solid;
+}
+
+#content tr td{
+    border-bottom: 1px #000000 solid;
+}
+
+#content table td{
+    border-spacing: 0;
+    border-collapse: collapse;
+    padding: 5px;
+    background-color: white;
+}
+
+div#header, div#content{
+    width: 800px;
+    margin: 0px auto;
+    padding: 0px;
+    background-color: white;
+}
+div#header-acta-ocupacion, div#content-acta-ocupacion{
+    width: 950px;
+    margin: 0px auto;
+    padding: 0px;
+    background-color: white;
+}
+
+div#header a{
+    float: right;
+    position: relative;
+}
+
+.negrita{
+    font-weight: bold;
+}
+.Mayuscula{
+    text-transform: uppercase!important;
+}
+.centrada{
+    text-align: center!important;
+}
+
+.division-soli-factura{
+    font-weight: bold;
+    text-transform: uppercase!important;
+    text-align: center!important;
+    background-color: #ddd;
+    line-height: 20px !important;
+}
+
+h4.header{
+    margin-left: 0px;
+    bottom: -17px;
+    position: relative;
+}
+h4.header-e{
+    margin-top: 35px;
+    margin-left: 0px;
+    margin-bottom: -37px;
+    position: relative;
+    position: relative;
+}
+
+h3.header{
+    margin-left: 0px;
+    bottom: -14px;
+    position: relative;
+    color:midnightblue;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+
+}
+h3.header-e{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    margin-top: 21px;
+    margin-left: 0px;
+    margin-bottom: -39px;
+    color:midnightblue;
+    position: relative;
+    position: relative;
+}
+
+div#ref{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    padding: 10px 0;
+}
+
+.cell-header{
+    text-transform: uppercase;
+    font-size: 10px;
+    position: relative;
+    top: 0px;
+}
+
+.cell-info{
+    height: 30px;
+    min-width: 30px;
+    margin-top: 20px;
+    margin-bottom: -20px;
+}
+
+table#entrega-recibe tbody th{
+    height: 20px;
+}
+
+table#entrega-recibe tr > td:nth-child(2){
+    border: none!important;
+    width: 25px;
+}
+
+div.subtitle{
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+#content table thead{
+    font-weight: bold;
+}
+
+table#documentos{
+    margin-bottom: 30px;
+}
+
+table#entrega-recibe{
+    margin: 0px auto;
+}
+
+
+table#entrega-recibe tbody td div{
+    position: relative;
+    top: -15px;
+}
+
+table#entrega-recibe thead td{
+    width: 300px;
+}
+
+table#entrega-recibe tbody td{
+    height: 50px;
+}
+
+table#ficha tr{
+    width: 900px!important;
+}
+table#ficha td{
+    border: 1px solid black;
+    line-height: 20px;
+    font-size: 14px!important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+td#title{
+    background-color: #dfdee2;
+}
+.letra-impresion{
+    font-family: Arial!important;
+    font-size: 16px!important;
+}
+
+.page{
+    page-break-after: always;
+    page-break-inside: avoid;
+}
+.page:last-child{
+    page-break-after: avoid;
+    page-break-inside: avoid
+}
+
+.marcado-exportar{
+    width: 30px;
+    height: 30px;
+    border: 1px black solid;
+    text-align: center;
+    float: left;
+    margin-right: 10px;
+}
+.subrayada
+{
+    text-decoration: underline!important;
+}
+
+.justificado
+{
+    text-align: justify!important;
+}
+
+/**TABLA PUNTO APORBACI'ON*/
+.marcado{
+    width: 20px;
+    height: 20px;
+    border: 1px black solid;
+    text-align: center;
+    float: left;
+    margin-right: 10px;
+}
+
+.tipo-accion > div:nth-child(1),
+.tipo-accion > div:nth-child(2){
+    margin-bottom: 10px;
+}
+
+.tipo-accion > div{
+    float: left;
+    min-width: 50%;
+    max-width: 50%;
+}
+.fundamentacion{
+    margin-left: 25px!important;
+
+}
+.moneda > div{
+    float: left;
+    margin-left: 10px;
+}
+.letra-exportar{
+    font-size: 20px;
+    font-family: Arial;
+}
+.letra-exportar-mostrar{
+    font-size: 50px;
+    font-family: Arial;
+}
+.letra-exportar-pdf{
+    font-size: 21px;
+    font-family: Arial;
+}
+.letra-exportar-pdf-acta-ocupacion{
+    font-size: 25px!important;
+    font-family: Arial;
+}
+.interlineado{
+    line-height: 1.5;
+}
+td{
+    padding: 4px 4px!important;
+}
+
+.tabla_punto,
+.tabla_punto td{
+    border: 1px solid #000000 !important;
+}
+
+
+.boton-sol-factura{
+    margin-left: 8px!important;
+    top: 93px!important;
+}
+
+.tabla-acta-ocupacion
+.tabla-acta-ocupacion td
+{
+    border: 1px solid #000000!important;
+}

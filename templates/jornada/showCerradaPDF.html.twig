@@ -1,0 +1,320 @@
+{% extends 'assets_views/document.html.twig' %}
+
+{% set footer = 'Servicios Integrales Tecnológicos – Esquina de Tejas entre 10 de octubre y San Joaquín – Teléfono: 78795048' %}
+
+{% block document %}
+    <table class="table-bordered mb-3" style="background-color: white; table-layout: fixed; width: 100%;">
+        <tr>
+            <td rowspan="3" colspan="1" class="p-3 pb-0">
+                <img src="{{ app.request.schemeAndHttpHost }}{{ asset('assets/institucional/sitec-logo-horizontal.jpg') }}" style="width: 100%;">
+            </td>
+            <td rowspan="3" colspan="4" class="text-blue-sitec p-3 pb-0" style="font-weight: bold; text-transform: uppercase; font-size: 20px; text-align: center;">
+                <h3>REPORTE DE JORNADA TERMINADA / {{ jornada.fecha | date('d-m-Y') }}</h3>
+            </td>
+        </tr>
+    </table>
+    <div class="text-center mb-3 border-bottom p-1 institucional-text"><small>{{ footer }}</small></div>
+    {% set span_yes = '<span class="glyphicon glyphicon-ok text-success"></span>' %}
+    {% set span_no = '<span class="glyphicon glyphicon-remove text-danger"></span>' %}
+    {% set span_so = '<span class="glyphicon glyphicon-minus text-info"></span>' %}
+    <div class="white">
+        <h5 class="border-bottom pb-2">Generales</h5>
+        <div class="pl-3">
+            <table class="table table-xs no-first-border">
+                <tr>
+                    <th>Fondo inicial</th>
+                    <td>$ {{ jornada.fondoInicial | number_format(2,'.',' ') }}</td>
+                </tr>
+                <tr>
+                    <th>Monto al cierre</th>
+                    <td>$ {{ jornada.fondoActual | number_format(2,'.',' ') }}</td>
+                </tr>
+                <tr>
+                    <th>Órdenes registradas</th>
+                    <td>{{ orden_trabajos | length }}</td>
+                </tr>
+                <tr>
+                    <th>Dictámenes realizados</th>
+                    <td>{{ dictamenes | length }}</td>
+                </tr>
+                <tr>
+                    <th>Revisiones realizadas</th>
+                    <td>{{ revisiones | length }}</td>
+                </tr>
+                <tr>
+                    <th>Reparaciones realizadas</th>
+                    <td>{{ reparaciones | length }}</td>
+                </tr>
+                <tr>
+                    <th>Salidas</th>
+                    <td>{{ salidas | length }}</td>
+                </tr>
+                <tr>
+                    <th>Equipos pendientes</th>
+                    <td>{{ equiposPendientes | length }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <h5 class="border-bottom pb-2" id="ordenes_registradas ">Órdenes</h5>
+        <div class="pl-3">
+            <table class="table table-xs no-first-border">
+                <thead>
+                <th>Nro. Orden</th>
+                <th>Registrado</th>
+                <th>Dictaminado</th>
+                <th>Revisado</th>
+                <th>Reparado</th>
+                <th>Salida</th>
+                <th>Pendiente</th>
+                </thead>
+                <tbody>
+                {% for key, elem in array %}
+                    <tr>
+                        <td>{{ key }}</td>
+                        <td>{{ elem['registrado'] is defined and elem['registrado'] ? span_yes|raw : ''}}</td>
+                        <td>{{ elem['dictaminado'] is defined and elem['dictaminado'] ? span_yes|raw : '' }}</td>
+                        <td>{{ elem['revisado'] is defined and elem['revisado'] ? span_yes|raw : '' }}</td>
+                        <td>{{ elem['reparado'] is defined and elem['reparado'] ? span_yes|raw : '' }}</td>
+                        <td>{{ elem['salida'] is defined and elem['salida'] ? span_yes|raw : span_no|raw }}</td>
+                        <td>{{ elem['pendiente'] is defined and elem['pendiente'] ? span_time|raw : '' }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7">No hay órdenes</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h5 class="border-bottom pb-2">Revisiones - Reparaciones por técnicos</h5>
+        <div class="pl-3">
+            <table class="table table-xs no-first-border">
+                <thead>
+                <th>Técnico</th>
+                <th>Nro. Orden</th>
+                <th>Estado Final</th>
+                <th class="text-right">Importe</th>
+                <th class="text-right">Gasto</th>
+                <th class="text-right">Ganancia</th>
+                </thead>
+                <tbody>
+                {% set suma_ingreso = 0 %}
+                {% set suma_gasto = 0 %}
+                {% for key, value in trabajos_tecnicos %}
+                    <tr>
+                        <td rowspan="{{ (value | length) + 1 }}">{{ key }}</td>
+                    </tr>
+                    {% for item in value %}
+                        <tr>
+                            <td>{{ item.ordenTrabajo.nroOrden }}</td>
+                            <td>{{ item.estadoFinal == 'R' ? span_yes|raw : span_no|raw }}</td>
+                            <td class="text-right">$ {{ (item.ingreso) | number_format(2,',','') }}</td>
+                            {% set suma_ingreso = suma_ingreso + item.ingreso %}
+                            <td class="text-right">$ {{ (item.gastoMateriales + item.otrosGastos) | number_format(2,',','') }}</td>
+                            {% set suma_gasto = suma_gasto + (item.gastoMateriales + item.otrosGastos) %}
+                            <td class="text-right">$ {{ (item.ingreso - item.gastoMateriales + item.otrosGastos) | number_format(2,',','') }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6">No hay revisiones - reparaciones</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr class="bold">
+                    <th colspan="3"></th>
+                    <th class="text-right">$ {{ suma_ingreso | number_format(2,',','') }}</th>
+                    <th class="text-right">$ {{ suma_gasto | number_format(2,',','') }}</th>
+                    <th class="text-right">$ {{ (suma_ingreso - suma_gasto) | number_format(2,',','') }}</th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <h5 class="border-bottom pb-2">Ingresos y gastos totales por técnicos</h5>
+        <div class="pl-3">
+            {% set suma_ingreso = 0 %}
+            {% set suma_gasto = 0 %}
+            {% set suma_total = 0 %}
+            <table class="table table-xs no-first-border">
+                <thead>
+                <th>Técnico</th>
+                <th class="text-right">Ingreso</th>
+                <th class="text-right">Gasto</th>
+                <th class="text-right">Ganancia</th>
+                </thead>
+                <tbody>
+                {% for key, value in gananciaTecnicos %}
+                    <tr>
+                        <td>{{ key }}</td>
+                        <td class="text-right">$ {{ (value['ingreso']) | number_format(2,'.',' ')}}</td>
+                        <td class="text-right text-danger">$ {{ (value['gasto']) | number_format(2,'.',' ')}}</td>
+                        <td class="text-right">$ {{ (value['total']) | number_format(2,'.',' ')}}</td>
+                    </tr>
+                    {% set suma_ingreso = suma_ingreso + value['ingreso'] %}
+                    {% set suma_gasto = suma_gasto + value['gasto'] %}
+                    {% set suma_total = suma_total + value['total'] %}
+
+                {% else %}
+                    <tr>
+                        <td colspan="4">No hay ingresos - gastos</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                <tr>
+                    <th></th>
+                    <th class="text-right">$ {{ (suma_ingreso) | number_format(2,'.',' ')}}</th>
+                    <th class="text-right text-danger">$ {{ (suma_gasto) | number_format(2,'.',' ')}}</th>
+                    <th class="text-right">$ {{ (suma_total) | number_format(2,'.',' ')}}</th>
+                </tr>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="row">
+            {% set distribucion = is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? true : false %}
+            <div class="col-{{ distribucion == true ? '6' : '12' }} pull-left">
+                <h5 class="border-bottom pb-2">Económicas</h5>
+                <div class="pl-3">
+                    <table class="table table-xs no-first-border">
+                        <tr>
+                            <td>Fondo en caja</td>
+                            <td class="text-right">$ {{ jornada.fondoInicial | number_format(2,',','') }}</td>
+                        </tr>
+                        <tr>
+                            <td>Fondo al cierre</td>
+                            <td class="text-right">$ {{ jornada.fondoActual | number_format(2,',','') }}</td>
+                        </tr>
+                        <tr>
+                            <td>Gastos</td>
+                            <td class="text-right">$ {{ gastoMateriales | number_format(2,',','') }}</td>
+                        </tr>
+                        <tr>
+                            {% set utilidades = (jornada.fondoActual - jornada.fondoInicial - gastoMateriales) %}
+                            {% set recepcionista = utilidades > 7000 ? 150 : 125 %}
+                            {% set paraTaller = utilidades / 2 %}
+                            <td><strong>Utilidades</strong></td>
+                            <td class="text-right"><strong>$ {{ utilidades | number_format(2,',','') }}</strong></td>
+                            {% set paraTaller = paraTaller - recepcionista %}
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            {% if distribucion == true %}
+                <div class="col-6 pull-left">
+                    <h5 class="border-bottom pb-2">Distribución de utilidades</h5>
+                    <div class="pl-3">
+                        <table class="table table-xs no-first-border">
+                            {% set utilidades = (jornada.fondoActual - jornada.fondoInicial - gastoMateriales) %}
+                            {% set recepcionista = utilidades > 7000 ? 150 : 125 %}
+                            {% set paraTaller = utilidades / 2 %}
+                            {% set paraTaller = paraTaller - recepcionista %}
+                            <tr>
+                                <td>Jefe de Taller <span class="text-danger pull-right">- $50</span></td>
+                                {% set jefe_taller = (paraTaller / 2 - 50) %}
+                                <td class="text-right {% if jefe_taller < 0 %}text-danger{% endif %}">$ {{ (jefe_taller > 0 ? jefe_taller : 0)  | number_format(2,',','') }}</td>
+                            </tr>
+                            <tr>
+                                <td>Administración</td>
+                                {% set administracion = (paraTaller / 2) %}
+                                <td class="text-right">$ {{ (administracion > 0 ? administracion : 0)  | number_format(2,',','') }}</td>
+                            </tr>
+                            <tr>
+                                <td>Recepcionista</td>
+                                <td class="text-right">$ {{ recepcionista | number_format(2,',','') }}</td>
+                            </tr>
+                            {% set tax = 50 %}
+                            {% for key, value in gananciaTecnicos %}
+                                <tr>
+                                    <td>{{ key }} <span class="text-danger pull-right">- $50</span></td>
+                                    {% set total = (value['total'] * 0.5 - 50) %}
+                                    <td class="text-right {% if total < 0 %}text-danger{% endif %}">$ {{ (total > 0 ? total : 0)  | number_format(2,',','') }}</td>
+                                </tr>
+                                {% set tax = tax + 50 %}
+                            {% endfor %}
+                            <tr>
+                                <td>Impuesto para el taller</td>
+                                <td class="text-right">$ {{ tax | number_format(2,'.',' ') }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <h5 class="border-bottom pb-2">Operaciones contables</h5>
+        <div class="pl-3">
+            <div class="col-12 pull-left">
+                <table id="datos-multi-select-desc-0" class="table table-xs">
+                    <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo operac.</th>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Saldo entrada</th>
+                        <th>Saldo salida</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for operacion in operacion_contables %}
+                        <tr>
+                            <td>{{ operacion.created | date('Y/m/d H:i:s') }}</td>
+                            <td>{{ operacion.tipoOperacion }}</td>
+                            <td>{{ operacion.codigo }}</td>
+                            <td>{{ operacion.descripcion }}</td>
+                            <td>{% if operacion.tipoOperacion == 'CR' %}<span style="float: left;" class="glyphicon glyphicon-plus-sign text-success"></span> <span style="float: right;">$ {{ operacion.saldo | number_format(2,'.',' ')}}</span>{% endif %}</td>
+                            <td>{% if operacion.tipoOperacion == 'DB' %}<span style="float: left;" class="glyphicon glyphicon-minus-sign text-danger"></span> <span style="float: right;">$ {{ operacion.saldo | number_format(2,'.',' ') }}</span>{% endif %}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6">No hay operaciones</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h5 class="border-bottom pb-2">Comprobantes de operaciones</h5>
+        <div class="pl-3">
+            <div class="col-12 pull-left">
+                <table id="datos-multi-select-all" class="table table-xs">
+                    <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Nro. Comprobante</th>
+                        <th>Tipo de operación</th>
+                        <th>Equipo</th>
+                        <th>Importe total</th>
+                        <th>Gasto total</th>
+                        <th>Técnico</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for comprobante_operacion in comprobantes %}
+                        <tr>
+                            <td style="white-space: nowrap;" data-order="{{ comprobante_operacion.created | date('YmdHis') }}">{{ comprobante_operacion.created | date('Y/m/d h:i:s') }}</td>
+                            <td>{{ comprobante_operacion.nroComprobante }}</td>
+                            <td style="white-space: nowrap;">{{ comprobante_operacion.tipoOperacion }}<br>{{ comprobante_operacion.ordenTrabajo.nroOrden }}</td>
+                            <td>{{ comprobante_operacion.ordenTrabajo.datosEquipo}}</td>
+                            <td class="text-right no-wrap">$ {{ comprobante_operacion.importeTotal | number_format(2,'.',' ') }}</td>
+                            <td class="text-right no-wrap">$ {{ comprobante_operacion.gastosAsociados | number_format(2,'.',' ') }}</td>
+                            <td>{{ comprobante_operacion.ordenTrabajo.ordenReparacion.revisadoPor.nombreCompleto }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7">No hay comprobantes</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block form_start %}
+    {{ form_start(form) }}
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    function textAreaFocus() {
+        $('#textarea').addClass('form-control');
+        $('#textarea').focus();
+        $('#textarea').val('a');
+    }
+</script>
+{% endblock %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : ('Datos de la orden de trabajo') ~ (garantia is defined and garantia == true ? ' (Garantía)' : '' ),
+        'link' : {
+            'back' : path('orden_trabajo_index', {'anno':"now"|date('Y'), 'mes':"now"|date('m'), 'dia':"now"|date('d')}),
+            'submit' : 'Confirmar'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                <div class="margin-bottom-20">
+                    {% if garantia is defined and garantia %}
+                        <div class="my-alert alert-info mb-4">
+                            {% set diasGarantia = date(orden_trabajo.garantiaOrdenPrincipal.fechaSalida|date('Y/m/d')).diff(date('now'|date('Y/m/d'))) %}
+                            Solicitud de Servicio de Post-Garantía asociada a la <b>Orden de Trabajo # {{ orden_trabajo.garantiaOrdenPrincipal.nroOrden }}</b>, con fecha de entrada <b>{{ orden_trabajo.garantiaOrdenPrincipal.fechaEntrada | date('d-m-Y h:i:s A') }}</b> y que regresa al taller transcurridos <b>{{ diasGarantia.days }} día{{ diasGarantia.days == 0 or diasGarantia.days > 1 ? 's' }}</b>, después de su salida el <b>{{ orden_trabajo.garantiaOrdenPrincipal.fechaSalida | date('d-m-Y h:i:s A') }}</b>
+                        </div>
+                    {% endif %}
+                    <h4>Datos iniciales</h4>
+                </div>
+                <div class="clearfix">
+                    {{ form_row(form.nroOrden) }}
+                    <div class="garantiaPrincipal-input" style="display: none;">{{ form_row(form.garantiaOrdenPrincipal) }}</div>
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12 md-form"><label style="transform: translateY(-14px) scale(0.8);">No. Orden</label><span class="input-solo-text mt-3">{{ form.nroOrden.vars.value }}</span></div>
+                    {% if form.tecnicoRepara is defined %}<div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.tecnicoRepara, {'attr' : {'class' : 'mdb-select md-form', 'searchable' : 'Buscar'}}) }}</div>{% endif %}
+                    <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12 md-form md-form-date">{{ form_row(form.fechaEntrada, {'attr' : { 'class' : 'datepicker' }}) }}</div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.esReparacion) }}</div>
+{#                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 md-form">{{ form_row(form.observaciones) }}</div>#}
+                    {% if form.observacionesfinales is defined %}<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.observacionesFinales, {'attr' : {'class' : 'mdb-select md-form', 'searchable' : 'Buscar'}}) }}</div>{% endif %}
+                </div>
+                <div class="margin-bottom-20">
+                    <h4>Datos del cliente</h4>
+                </div>
+                <div class="clearfix">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.clienteNombreCompleto) }}</div>
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.clienteCarneIdentidad) }}</div>
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.clienteTelefonosContacto) }}</div>
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12 md-form"><button disabled class="btn btn-primary btn-floating" data-toggle="modal" href="#qrModal" type="button"><span class="glyphicon glyphicon-qrcode"></span></button> </div>
+                </div>
+                <div class="margin-bottom-20">
+                    <h4>Datos del equipo</h4>
+                </div>
+                <div class="clearfix">
+                    <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.equipoTipo, {'attr' : {'class' : 'mdb-select md-form', 'searchable' : 'Buscar'}}) }}</div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.equipoMarca) }}</div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.equipoModelo) }}</div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.equipoSerie) }}</div>
+                    <div class="col-lg-12 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.motivoVisita) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="qrModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title h4" id="myLargeModalLabel">Escanee el código QR</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-12">
+                        <p class="mb-3">Por favor, escanee el código QR que se encuentra en la parte posterior.</p>
+                        <img class="w-100 mb-3" src="{{ asset('images/canet.webp') }}">
+                        <input type="text" id="qrName" class="form-control mb-2" autofocus>
+                        <input type="text" id="qrApellidos" class="form-control mb-2" autofocus>
+                        <input type="text" id="qrCarne" class="form-control mb-2" autofocus>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect waves-light" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary waves-effect waves-light">Imprimir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block form_end %}
+    {{ form_row(form._token) }}
+    {{ form_end(form, {'render_rest' : false}) }}
+{% endblock %}

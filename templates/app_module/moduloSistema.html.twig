@@ -1,0 +1,62 @@
+{% if is_granted('ROLE_ADMINISTRADOR_NEGOCIO') %}
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('usuario_index', { 'estado' : 'activo' }) }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/user.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Usuarios</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('rol_index') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/user-group.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Roles</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('cargo_index') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/user-solid-circle.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Cargos</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('equipo_tipo_index') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/list-bullet.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Tipos de equipos</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('app_module_sistema_avanzado') }}">
+            <div class="card bg-secondary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/key.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Avanzado</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+{% endif %}

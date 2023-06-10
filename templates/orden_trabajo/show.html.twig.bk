@@ -1,0 +1,210 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {% if orden_trabajo.estado != 'Terminada' %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+    'title' : 'Orden de trabajo # ' ~ orden_trabajo.nroOrden,
+        'link' : {
+            'personalized': orden_trabajo.fechaSalida is not null and orden_trabajo.estado != 'DEC' ? {
+                'path':  path('orden_trabajo_modelo_entrega', {'id' : orden_trabajo.id }),
+                'icon' : 'print',
+                'text' : 'Imprimir modelo',
+            } : '#',
+            'new' : path('orden_trabajo_new'),
+            'reservac' : path('orden_trabajo_reservar'),
+            'back' : is_granted('ROLE_RECEPCIONISTA') ? path('jornada_show_hoy') : path('orden_trabajo_index', {'anno':"now"|date('Y'), 'mes':"now"|date('m'), 'dia':"now"|date('d')}),
+            'ops' : is_granted('ROLE_RECEPCIONISTA') and orden_trabajo.fechaListoEntregar is null ? {
+                'edit' : orden_trabajo.fechaNotificacion is null ? path('orden_trabajo_edit', { 'id': orden_trabajo.id }) : '#',
+                'delete' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? null : "#"
+            } : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') and orden_trabajo.fechaNotificacion is null ? {
+                'delete' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? null : "#"
+            } :
+            '#'
+        }
+    }) }}
+    {% else %}
+        {{ include ("_mdb/mdb_page_top_section.html.twig", {
+            'title' : 'Orden de trabajo # ' ~ orden_trabajo.nroOrden,
+            'link' : {
+                'back' : path('orden_trabajo_index'),
+                'ops' : '#'
+            }
+        }) }}
+    {% endif %}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <table class="table no-first-border table-xs">
+            <tbody>
+            <tr>
+                <th class="border-bottom-th" colspan="2" style="text-align: center;">Datos de la orden</th>
+            </tr>
+            <tr>
+                <th>Nro. Orden</th>
+                <td>{{ orden_trabajo.nroOrden }} {% if orden_trabajo.garantiaOrdenPrincipal %} / <a class="text-primary dotted" href="{{ path('orden_trabajo_show', {'id': orden_trabajo.garantiaOrdenPrincipal.id}) }}">{{ orden_trabajo.garantiaOrdenPrincipal.nroOrden }}</a>{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Fecha de entrada</th>
+                <td>{{ orden_trabajo.fechaEntrada | fechahora_es  }}<button class="btn btn-primary btn-sm pull-right ml-3" data-toggle="modal" href="#showFechas">Línea del tiempo</button></td>
+            </tr>
+            <tr>
+                <th>Estado de esta orden</th>
+                <td>{{ orden_trabajo.estado | traducirSiglas }} / {{ orden_trabajo.observacionesFinalesConverted == 'R' ? '<span class="text-success glyphicon glyphicon-ok"></span>' : '<span class="text-danger glyphicon glyphicon-remove"></span>' }}</td>
+            </tr>
+            {% if orden_trabajo.garantiasAsociadas|length > 0 and orden_trabajo.garantiaOrdenPrincipal is null %}
+            <tr>
+                <th>Estado final del equipo</th>
+                <td>{{ orden_trabajo.estadoFinalOrdenTrabajo == 'R' ? '<span class="text-success glyphicon glyphicon-ok"></span>' : '<span class="text-danger glyphicon glyphicon-remove"></span>' }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <th>Asignado a</th>
+                <td>{{ orden_trabajo.tecnicoRepara ? orden_trabajo.tecnicoRepara.nombreCompleto : 'La orden todavía no tiene técnico asignado. Es una reservación.' }}</td>
+            </tr>
+            <tr>
+                <th>Dejar en taller</th>
+                <td>{{ orden_trabajo.dejadoEnTaller ? 'Si' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th class="border-bottom-th" colspan="2" style="text-align: center;">Datos del cliente</th>
+            </tr>
+            <tr>
+                <th>Nombre(s) y apellidos</th>
+                <td>{{ orden_trabajo.clienteNombreCompleto }}</td>
+            </tr>
+            <tr>
+                <th>Teléfono(s) de contacto</th>
+                <td>{{ orden_trabajo.clienteTelefonosContacto }}</td>
+            </tr>
+            <tr>
+                <th>Carné de identidad</th>
+                <td>{{ orden_trabajo.clienteCarneIdentidad }}</td>
+            </tr>
+            <tr>
+                <th class="border-bottom-th" colspan="2" style="text-align: center;">Datos del equipo</th>
+            </tr>
+            <tr>
+                <th>Tipo de equipo</th>
+                <td>{{ orden_trabajo.equipoTipo.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Marca</th>
+                <td>{{ orden_trabajo.equipoMarca }}</td>
+            </tr>
+            <tr>
+                <th>Modelo</th>
+                <td>{{ orden_trabajo.equipoModelo }}</td>
+            </tr>
+            <tr>
+                <th>Serie</th>
+                <td>{{ orden_trabajo.equipoSerie }}</td>
+            </tr>
+            {% if orden_trabajo.ordenReparacion %}
+                {% set orden_reparacion = orden_trabajo.ordenReparacion %}
+                <tr>
+                    <th class="border-bottom-th" colspan="2" style="text-align: center;">Datos de la reparación<a class="btn btn-sm btn-primary pull-right ml-3" href="{{ path('orden_reparacion_show', {'id': orden_reparacion.id}) }}">Ver orden de reparación</a></th>
+                </tr>
+                <tr>
+                    <th>Importe cobrado</th>
+                    <td>$ {{ orden_trabajo.ordenReparacion.ingreso | number_format(2,',','') }}</td>
+                </tr>
+                <tr>
+                    {% set diasGarantia = date(orden_reparacion.ordenTrabajo.fechaSalida|date('Y/m/d')).diff(date('now'|date('Y/m/d'))) %}
+                    <th>Días de grantía</th>
+                    <td>
+                        {% if orden_trabajo.garantiasAsociadas | length == 0 %}
+                            {{ orden_reparacion.diasGarantia ?: 0 }} día{{ orden_reparacion.diasGarantia == 0 or orden_reparacion.diasGarantia > 1 ? 's'  }}
+                            {% if orden_reparacion.diasGarantia == 0 %}
+                                <b class="text-danger ml-3">No tiene garantía</b>
+                            {% elseif diasGarantia.days <= orden_reparacion.diasGarantia %}
+                                <b class="text-success ml-3">Días restantes: {{ orden_reparacion.diasGarantia - diasGarantia.days }}</b>
+                                <input type="hidden" name="garantia_orden_trabajo_id" value="{{ orden_trabajo.id }}">
+                                {% if orden_trabajo.garantiaOrdenPrincipal is not defined or orden_trabajo.garantiaOrdenPrincipal is null %}
+                                    <a class="btn btn-success btn-sm ml-3 pull-right" href="{{ path('orden_trabajo_new', {'garantia_de' : orden_trabajo.id }) }}">Nueva orden de garantía</a>
+                                {% endif %}
+                            {% else %}
+                                    <b class="text-success ml-3">Garantía vencida</b>
+                            {% endif %}
+                    </td>
+                        {% else %}
+                            {% set ultimaOrden = orden_trabajo.garantiasAsociadas[orden_trabajo.garantiasAsociadas|length - 1] %}
+                            {% set garantiaHasta =ultimaOrden.ordenReparacion.diasGarantia is not null ? ultimaOrden.fechaSalida|date_modify("+" ~ ultimaOrden.ordenReparacion.diasGarantia ~ " day") : null %}
+                            {% if garantiaHasta is not null and date(garantiaHasta) >= date("now") %}
+                                <div>Este equipo esta en garantía, por {{ ultimaOrden.ordenReparacion.diasGarantia ?: 0 }} día{{ ultimaOrden.ordenReparacion.diasGarantia == 0 or ultimaOrden.ordenReparacion.diasGarantia > 1 ? 's'  }}, desde el {{ ultimaOrden.fechaSalida | date('d-m-Y h:i:s a') }} hasta el {{ garantiaHasta | date('d-m-Y h:i:s a') }}.</div>
+                                <div>Referencia: <a href="{{ path('orden_trabajo_show', {'id': ultimaOrden.id }) }}" class="bold text-primary">{{ ultimaOrden.nroOrden }}</a></div>
+                            {% else %}
+                                <div class="text-danger">Equipo sin garantía</div>
+                            {% endif %}
+                        {% endif %}
+                </tr>
+                <tr>
+                    <th>Post-Garantías realizadas</th>
+                    <td>
+                        <ul class="mb-0" style="list-style: none">
+                            {% for garantia in orden_trabajo.garantiasAsociadas %}
+                                    <li><a class="text-primary bold" href="{{ path('orden_trabajo_show', {'id': garantia.id }) }}">{{ garantia.nroOrden }}</a> -  {% if not garantia.fechaSalida %}En proceso{% else %}Terminada{% endif %}</li>
+                            {% else %}
+                                Ninguna
+                            {% endfor%}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Materiales usados</th>
+                    <td>{{ orden_reparacion.materialesUsados }}</td>
+                </tr>
+                <tr>
+                    <th>Gasto en materiales</th>
+                    <td>
+                        $ {{ orden_reparacion.gastoMateriales | number_format(2,',','') }}
+                        {% if orden_trabajo.garantiasAsociadas %}
+                            <span class="text-primary ml-3 bold">Gasto total en materiales:
+                            {% set sum = 0 %}
+                                {% for garantia in orden_trabajo.garantiasAsociadas %}
+                                    {% set sum = sum + garantia.ordenReparacion.gastoMateriales %}
+                                {% endfor %}
+                            $ {{ (orden_reparacion.gastoMateriales + sum) | number_format(2,',','') }}
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+        {{ include('_mdb/mdb_metadata.html.twig', {'elem' : orden_trabajo}) }}
+        {{ include('_mdb/mdb_delete_modal.html.twig') }}
+        <div class="modal fade" id="showFechas" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-notify modal-primary">
+                <!--Content-->
+                <div class="modal-content text-center">
+                    <!--Header-->
+                    <div class="modal-header d-flex justify-content-center">
+                        <p class="heading">Línea del tiempo</p>
+                    </div>
+                    <!--Body-->
+                    <div class="modal-body">
+                        {% if orden_trabajo.fechaEntrada %}<div class="mb-2"><div class="text-primary fw-500">Entrada</div>{{ orden_trabajo.fechaEntrada | date('d/m/Y h:i:s a') }}</div>{% endif %}
+                        {% if orden_trabajo.fechaDictamen %}<div class="mb-2"><div class="text-primary fw-500"><a href="{{ path('dictamen_tecnico_show', {'id': orden_trabajo.dictamenTecnico.id}) }}">Dictaminado</a></div>{{ orden_trabajo.fechaDictamen | date('d/m/Y h:i:s a') }}</div>{% endif %}
+                        {% if orden_trabajo.fechaRevision %}<div class="mb-2"><div class="text-primary fw-500"><a href="{{ path('orden_reparacion_show', {'id': orden_trabajo.ordenReparacion.id}) }}">Revisado</a></div>{{ orden_trabajo.fechaRevision | date('d/m/Y h:i:s a')}}</div>{% endif %}
+                        {% if orden_trabajo.fechaListoEntregar %}<div class="mb-2"><div class="text-primary fw-500">Listo para entregar</div>{{ orden_trabajo.fechaListoEntregar | date('d/m/Y h:i:s a') }}</div>{% endif %}
+                        {% if orden_trabajo.fechaNotificacion %} <div class="mb-2"><div class="text-primary fw-500">Notificado</div>{{ orden_trabajo.fechaNotificacion | date('d/m/Y h:i:s a')}}</div>{% endif %}
+                        {% if orden_trabajo.fechaFacturacion %}<div class="mb-2"><div class="text-primary fw-500"><a href="{{ path('comprobante_operacion_show', {'id': orden_trabajo.comprobante.id }) }}">Facturado</a></div>{{ orden_trabajo.fechaFacturacion | date('d/m/Y h:i:s a') }}</div>{% endif %}
+                        {% if orden_trabajo.fechaSalida %}<div class="mb-2"><div class="text-primary fw-500"><a href="{{ path('orden_trabajo_modelo_entrega', {'id': orden_trabajo.id }) }}">Salida</a></div>{{ orden_trabajo.fechaSalida | date('d/m/Y h:i:s a') }} {{ orden_trabajo.observacionesFinalesConverted == 'R' ? '<span class="text-success glyphicon glyphicon-ok pull-right"></span>' : '<span class="text-danger glyphicon glyphicon-remove pull-right"></span>' }}</div>{% endif %}
+
+                        {% for garantia in orden_trabajo.garantiasAsociadas %}
+                            <div class="mb-2"><div class="text-primary fw-500"><a href="{{ path('orden_trabajo_modelo_entrega', {'id': garantia.id }) }}">Post-Garantía {{ loop.index }} </a></div>{{ garantia.fechaEntrada | date('d/m/Y h:i:s a') }}{% if garantia.fechaSalida %} - {{ garantia.fechaSalida | date('d/m/Y h:i:s a') }}{% endif %} {{ garantia.observacionesFinalesConverted == 'R' ? '<span class="text-success glyphicon glyphicon-ok pull-right"></span>' : '<span class="text-danger glyphicon glyphicon-remove pull-right"></span>' }}</div>
+                        {% endfor %}
+
+                    </div>
+                    <!--Footer-->
+                    <div class="modal-footer flex-center">
+                        <a type="button" class="btn btn-primary waves-effect" data-dismiss="modal">Salir</a>
+                    </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+    <table class="table cursiva text-black-50 table-xs">
+        <thead>
+            <tr>
+                <th colspan="2">Datos del registro</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th>Creado por</th>
+            <td>
+                <b>
+                    {{ elem.createdBy.username }}
+                    {% if elem.createdBy.trabajador is defined and elem.createdBy.trabajador is not null%} (
+                    <a href="{{ path('trabajador_show', {'id':  elem.createdBy.trabajador.id }) }}">{{ elem.createdBy.trabajador.nombreCompleto }}</a>
+                    ) {% endif %}
+                </b>
+                / {{ elem.created | fecha_es }} {{ elem.created | date("h:i:s a") }}
+            </td>
+        </tr>
+        {% if elem.created != elem.updated %}
+        <tr>
+            <th>Última modificación</th>
+            <td>
+                <b>
+                {{ elem.updatedBy.username }}
+                {% if elem.updatedBy.trabajador is defined and elem.updatedBy.trabajador is not null%} (
+                    <a href="{{ path('trabajador_show', {'id':  elem.updatedBy.trabajador.id }) }}">{{ elem.updatedBy.trabajador.nombreCompleto }}</a>
+                    ) {% endif %}
+                </b>
+                / {{ elem.updated | fecha_es }} {{ elem.updated | date("h:i:s a") }}
+            </td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>

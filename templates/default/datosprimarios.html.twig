@@ -1,0 +1,37 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Datos primarios',
+        'link' : {
+            'back' : path('homepage')
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <table id="datos" class="table table-xs">
+            <thead>
+                <th width="175px;">Categoría</th>
+                <th width="250px;">Enlace</th>
+                <th>Descripción</th>
+            </thead>
+            <tbody>
+                {% for grupo in datosPrimarios.grupos %}
+                    {% if grupo.enlaces | length != 0 %}
+                        <tr>
+                            <td rowspan="{{ grupo.enlaces | length + 1 }}">{{ grupo.categoria }}</td>
+                        </tr>
+                        {% for enlace in grupo.enlaces %}
+                            <tr>
+                                <td class="enlace">{{ enlace.nombre }} <a class="badge badge-primary float-right" href="{{ enlace.enlace }}">Ver</a> </td>
+                                <td>{{ enlace.descripcion }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

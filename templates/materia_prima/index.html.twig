@@ -1,0 +1,57 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Materias primas' ~ (existencias is defined ? ' disponibles' : ''),
+        'link' : {
+            'new' : is_granted('ROLE_ADMINISTRACION') ? path('materia_prima_entrada_new') : '#',
+            'ops' : {
+                'print' : path('materia_prima_imprimir_existencias'),
+                'export' : path('materia_prima_exportar_existencias')
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+
+<div class="white">
+    <div>
+        <table id="datos-multi-select-all" class="table table-xs">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>U/M</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Equipo destino</th>
+                <th data-sortable="false"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for materia_prima in materia_primas %}
+            <tr>
+                <td>{{ materia_prima.nombre }}</td>
+                <td>{{ materia_prima.descripcion }}</td>
+                <td>{{ materia_prima.unidadMedida }}</td>
+                <td>{{ materia_prima.cantidad }}</td>
+                <td>$ {{ materia_prima.precio | number_format(2,'.',' ')}}</td>
+                <td>{{ materia_prima.tipoEquipoDestino ? materia_prima.tipoEquipoDestino.nombre  : '' }}</td>
+                <td>
+                    {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                        'link' : {
+                            'show' : path('materia_prima_show', { 'id': materia_prima.id }),
+                            'edit' : is_granted('ROLE_ADMINISTRACION') ? path('materia_prima_edit', { 'id': materia_prima.id }) : '#',
+                        }
+                    }) }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+    {{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}
+

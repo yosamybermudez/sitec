@@ -1,0 +1,47 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block form_start %}
+    {{ form_start(form) }}
+{% endblock %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Facturar orden',
+        'link' : {
+            'back' : path('jornada_index'),
+            'submit' : 'Confirmar'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                <div class="clearfix">
+                    <div class="col-lg-12 col-md-4 col-sm-12 col-xs-12 md-form"><div class="text-primary fw-500">Importe a pagar</div> $ {{ orden_trabajo.ordenReparacion.ingreso | number_format(2,'.',' ') }}</div>
+                    <div class="col-lg-12 col-md-4 col-sm-12 col-xs-12 md-form">{{ form_row(form.importeEntregado) }}</div>
+                    <div class="col-lg-12 col-md-4 col-sm-12 col-xs-12 md-form">{{ form_row(form.dejarEnTallerTemporalmente) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block form_end %}
+    {{ form_row(form._token) }}
+   {% endblock %}
+
+{% block script %}
+    <script>
+        $('button[name="save"]').click(function () {
+            var importe = {{ orden_trabajo.ordenReparacion.ingreso }};
+            var aPagar = $('#form_importeEntregado').val();
+            if(aPagar < importe){
+                console.log('es menor');
+                showToastMessage('error', 'El importe entregado es menor que la cantidad solicitada', 3000);
+                return false;
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {% set options = "" %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Datos del decomiso'
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <div>
+        {% set diasEnTaller = date(orden_trabajo.fechaEntrada|date('Y/m/d')).diff(date('now'|date('Y/m/d'))) %}
+        El equipo: <b>{{ orden_trabajo.equipoTipo.nombre }} {{ orden_trabajo.equipoMarca }} {{ orden_trabajo.equipoModelo }}{% if orden_trabajo.equipoSerie %}(S/N: {{ orden_trabajo.equipoSerie }}) {% endif %} </b>, perteneciente a <b>{{ orden_trabajo.clienteNombreCompleto }}, con CI: {{ orden_trabajo.clienteCarneIdentidad }}</b>, lleva <b>{{ diasEnTaller.days }} día{% if diasEnTaller.days != 1 %}s{% endif %}</b> en el taller, cuando el máximo período de estancia permitido es 60 días. El equipo se puede proceder a decomisar.
+    </div>
+    <form method="post">
+        <button class="btn btn-primary mt-3" type="submit">Decomisar</button>
+    </form>
+</div>
+{% endblock %}

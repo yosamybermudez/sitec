@@ -1,0 +1,326 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block form_start %}
+    {{ form_start(form) }}
+{% endblock %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Datos de la revisión / Orden de trabajo # ' ~ orden_reparacion.ordenTrabajo.nroOrden,
+        'link' : {
+            'back' : path('dictamen_tecnico_trabajos_pendientes'),
+            'submit' : 'Confirmar'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <div class="row">
+            <div class="mb-4  col-lg-6 col-md-6 col-sm-12 col-xs-12"><div class="text-primary fw-500 col-12">Datos del equipo</div> <span class="col-12"><b>{{ orden_reparacion.ordenTrabajo.equipoTipo.nombre }}</b> {{ orden_reparacion.ordenTrabajo.datosEquipo }}</span></div>
+            <div class="mb-4 col-lg-6 col-md-6 col-sm-12 col-xs-12"><div class="text-primary fw-500 col-12">Motivo de la visita</div> <span class="col-12">{{ orden_reparacion.ordenTrabajo.motivoVisita }}</span></div>
+            <div class="mb-4 col-lg-6 col-md-12 col-sm-12 col-xs-12"><div class="text-primary fw-500 col-12">Datos del cliente</div> <span class="col-12">{{ orden_reparacion.ordenTrabajo.clienteNombreCompleto }} / {{ orden_reparacion.ordenTrabajo.clienteCarneIdentidad }} / {{ orden_reparacion.ordenTrabajo.clienteTelefonosContacto }}</span></div>
+            {% if orden_reparacion.ordenTrabajo.garantiaOrdenPrincipal %}
+            <div class="mb-4 col-lg-6 col-md-6 col-sm-12 col-xs-12"><div class="text-primary fw-500 col-12">Orden base</div> <span class="col-12"><a class="dotted" href="{{ path('orden_trabajo_show', {'id': orden_reparacion.ordenTrabajo.garantiaOrdenPrincipal.id }) }}"> {{ orden_reparacion.ordenTrabajo.garantiaOrdenPrincipal.nroOrden }}</a></span></div>
+
+                <div class="mb-4 col-lg-12 col-md-6 col-sm-12 col-xs-12"><div class="text-primary fw-500 col-12">Descripción de la reparación inicial</div>
+
+                       <div class="col-12">
+                           {% set ot = orden_reparacion.ordenTrabajo.garantiaOrdenPrincipal %}
+                           {% set orden_rep = ot.ordenReparacion %}
+                           {% set diasGarantia = date(orden_rep.ordenTrabajo.fechaSalida|date('Y/m/d')).diff(date("now")) %}
+                           El {{ ot.ordenReparacion.created | fecha_es }} se recibe el <b>{{ ot.equipoTipo.nombre }} {{ ot.equipoMarca }} {{ ot.equipoModelo }}</b>{% if ot.equipoSerie %}, con S/N: {{ ot.equipoSerie }}{% endif %}; perteneciente a <b>{{ ot.clienteNombreCompleto }}</b>, con CI: {{ ot.clienteCarneIdentidad }}.
+                           El equipo fue reparado por {{ ot.ordenReparacion.revisadoPor.nombreCompleto }}, el {{ ot.ordenReparacion.updated | fechahora_es }}, con un costo de materiales de <b>$ {{ ot.ordenReparacion.gastoMateriales | number_format(2,'.',' ') }}</b> y un importe cobrado de <b>$ {{ ot.ordenReparacion.ingreso | number_format(2,'.',' ') }}</b>.
+                           El equipo fue entregado al cliente el {{ ot.fechaSalida | fechahora_es }}, {% if ot.ordenReparacion.diasGarantia != 0 %}con {{ ot.ordenReparacion.diasGarantia }} día{{ ot.ordenReparacion.diasGarantia == 0 or ot.ordenReparacion.diasGarantia > 1 ? 's' : '' }} de garantía{% else %}sin días de garantía{% endif %}; y regresa el {{ orden_reparacion.ordenTrabajo.fechaEntrada | fechahora_es }}.
+                       </div>
+                </div>
+                {% set diasRestantesDeLaGarantia = orden_rep.diasGarantia - (date(orden_rep.ordenTrabajo.fechaSalida|date('Y/m/d')).diff(date(orden_reparacion.ordenTrabajo.fechaEntrada|date('Y/m/d'))).days) %}
+                <div class="mb-4 col-lg-6 col-md-12 col-sm-12 col-xs-12"><div class="text-primary fw-500 col-12">Estado de la garantía</div> <span class="col-12">{% if orden_rep.diasGarantia == 0 %}El equipo no tiene garantía{% elseif diasRestantesDeLaGarantia > 0 %}<span class="text-success">{{ diasRestantesDeLaGarantia }}{{ diasRestantesDeLaGarantia > 1 ? ' días restantes' : ' día restante' }}</span>{% else %}<span class="text-danger">Garantía vencida</span>{% endif %}</td></span></div>
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                <div class="clearfix">
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 md-form">{{ form_row(form.created, {'attr' : { 'class' : 'datepicker' }}) }}</div>
+                    <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 md-form">{{ form_row(form.estadoFinal, {'attr' : {'class' : 'mdb-select'}}) }}</div>
+                   {% if not orden_reparacion.ordenTrabajo.garantiaOrdenPrincipal %} <div id="ingreso-input" class="col-lg-3 col-md-12 col-sm-12 col-xs-12 md-form">{{ form_row(form.ingreso) }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+        {% if orden_reparacion.ordenTrabajo.esReparacion %}
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                <div class="clearfix">
+                    <div id="observacionesFinales-input" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 md-form" style="display: none;">{{ form_row(form.observacionesFinales, {'attr' : {'class' : 'mdb-select md-form', 'searchable' : 'Buscar'}}) }}</div>
+                    {% if form.diasGarantia is defined %}<div id="diasGarantia-input" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.diasGarantia) }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if form.observaciones is defined %}
+        <div class="row">
+            <div class="col-12">
+                <div class="clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 md-form">{{ form_row(form.observaciones) }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if orden_reparacion.ordenTrabajo.esReparacion %}
+        <div class="materiales-usados">
+            <div class="row mb-2">
+                <div class="col-6"><h5 class="mb-0 mt-2">Materiales usados</h5></div>
+                <div class="col-6">
+                    <button type="button"
+                            class="add-another-collection-widget btn btn-sm btn-primary m-0 pull-right"
+                            data-list-selector="#materiales"><span class="glyphicon glyphicon-plus"></span> Añadir material registrado</button>
+                    <button type="button"
+                            class="calcular-gastos btn btn-sm btn-secondary m-0 mr-2 pull-right"
+                            data-list-selector="#materiales"><span class="glyphicon glyphicon-usd"></span> Calcular gasto</button>
+                </div>
+            </div>
+            {% set ot = orden_reparacion.ordenTrabajo %}
+            <div class="my-alert alert-info mb-3 p-1 text-center"><small>Registre los materiales utilizados para la reparación del {{ ot.datosEquipo }}, correspondiente a la Orden de Trabajo # {{ ot.nroOrden }}.</small></div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="overflow: hidden;" id="materiales-no-registrados">
+                <div class="col-lg-9 col-md-6 col-sm-12 col-xs-12 md-form">{{ form_row(form.otrosMateriales) }}</div>
+                <div class="col-lg-2 col-md-4 col-sm-11 col-xs-11 md-form">{{ form_row(form.otrosGastos) }}</div>
+                <div class="col-lg-1 col-md-2 col-sm-1 col-xs-11 md-form"><button type="button" class="remove-materiales-no-registrados btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></button> </div>
+            </div>
+            <div class="col-12">
+                <ul id="materiales" style="list-style: none;"
+                    data-prototype="{{ form_widget(form.movimientosMateriaPrima.vars.prototype)|e }}"
+                    data-widget-tags="{{ '<li></li>' | e }}"
+                    data-widget-counter="{{ form.movimientosMateriaPrima|length }}"
+                >
+                    {% for materiaPrima in form.movimientosMateriaPrima %}
+                        {{ form_row(materiaPrima) }}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block form_end %}
+    {{ form_row(form._token) }}
+    {{ form_end(form, {'render_rest':false}) }}
+{% endblock %}
+
+
+{% block script %}
+    <script type="text/javascript">
+        $('.remove-materiales-no-registrados').click(function () {
+            $('#materiales-no-registrados').remove();
+        });
+        $('.calcular-gastos').click(function () {
+            $('#importe-total').html('');
+            var arr = new Array();
+            $('select.select-mp').each(function () {
+                arr.push($(this).val());
+            });
+            if(hasDuplicates(arr)){
+                showToastMessage('danger','No puede especificar materiales con el mismo nombre', '2000');
+                return false;
+            }
+            var count = 0;
+            $('select.select-mp').each(function () {
+                var select = $(this);
+                var text = $('option:selected', select).text(); // se coge el texto
+                var existencia = (text.split(" - ")[1]).split(" ")[0];
+                var cantidad = $(this).closest('.material').find('.cantidad-mp').val();
+                if(cantidad > existencia){
+                    count++;
+                }
+            });
+            if(count > 0){
+                showToastMessage('danger','No puede especificar una cantidad a utilizar mayor que la cantidad en existencia. Revise la lista de materiales utilizados', '4000');
+                return false;
+            }
+            ////
+            var importe = Number(0);
+            var options = { style: 'currency', currency: 'USD'};
+            $('.cantidad-mp').each(function () {
+                var select = $(this).closest('.material').find('.select-mp');
+                var text = $('option:selected', select).text(); // se coge el texto
+                var precio = (text.split(" - ")[2]).split(" ")[1];
+                var importeParcial = Number(precio) * Number($(this).val());
+                if($(this).closest('.material').find('div.precio').length > 0){
+                    $(this).closest('.material').find('div.precio').html(new Intl.NumberFormat('en-US', options).format(importeParcial));
+                } else {
+                    $(this).closest('.material').append('<div class="form-group precio">' + new Intl.NumberFormat('en-US', options).format(importeParcial) + '</div>');
+                }
+                importe += importeParcial;
+            });
+            importe += $('#orden_reparacion_otrosGastos').val() ? Number($('#orden_reparacion_otrosGastos').val()) : 0;
+            var html = "Gasto total en materiales: " + new Intl.NumberFormat('en-US', options).format(importe) + ". Tenga en cuenta este valor para calcular el importe total del servicio prestado.";
+          // / if($('.materiales-usados').find('div#importe-total').length > 0){
+                showToastMessage('info', html, 4000);
+              //  $('div#importe-total').html(html);
+          //  } else {
+          //      $('#materiales').prepend('<div class="form-group" id="importe-total">' + html + '</div>');
+          //  }
+
+        });
+        $('.mdb-select').removeClass('form-control');
+        $('.mdb-select').addClass('w-100');
+        $('#counter').html($('.material-usado').length);
+        $('.material-usado').clone().insertAfter('.material-usado');
+
+        $('.add-another-collection-widget').click(function () {
+            $('#importe-total').html('');
+            $('.calcular-gastos').css('display', 'block');
+            var cantidad = {{ cantidad_mp }};
+            var list = $($(this).attr('data-list-selector'));
+            var counter = $('.remove-btn').length;
+            if(counter < cantidad){
+                var newWidget = list.attr('data-prototype');
+                newWidget = newWidget.replace(/__name__/g, counter);
+                counter++;
+                if(counter === cantidad){
+                    $(this).css('display','none');
+                } else {
+                    $(this).css('display','block');
+                }
+                list.data('widget-counter', counter);
+                var newElem = $(list.attr('data-widget-tags')).html(newWidget);
+                newElem.appendTo(list);
+            } else {
+                $(this).css('display','none');
+            }
+
+        });
+
+        $('button[name="save"]').click(function () {
+            if($('#orden_reparacion_otrosMateriales').val() != '' && $('#orden_reparacion_otrosGastos').val() == ''){
+                showToastMessage('danger','Especificó los otros materiales (Materiales usados), pero no los otros gastos (Valor total)', '4000');
+                return false;
+            }
+            if($('#orden_reparacion_otrosMateriales').val() == '' && $('#orden_reparacion_otrosGastos').val() != ''){
+                showToastMessage('danger','Especificó los otros gastos (Valor total), pero no los otros materiales (Materiales)', '4000');
+                return false;
+            }
+            var arr = new Array();
+            $('select.select-mp').each(function () {
+                arr.push($(this).val());
+            });
+            if(hasDuplicates(arr)){
+                showToastMessage('danger','No se pueden especificar materiales con el mismo nombre', '2000');
+                return false;
+            }
+            var count = 0;
+            $('select.select-mp').each(function () {
+                var select = $(this);
+                var text = $('option:selected', select).text(); // se coge el texto
+                var existencia = (text.split(" - ")[1]).split(" ")[0];
+                var cantidad = $(this).closest('.material').find('.cantidad-mp').val();
+                if(cantidad > existencia){
+                    count++;
+                }
+            });
+            if(count > 0){
+                showToastMessage('danger','No puede especificar una cantidad a utilizar mayor que la cantidad en existencia. Revise la lista de materiales utilizados', '4000');
+                return false;
+            }
+        });
+
+        function showAlert(text, type) {
+            $('div.white').prepend('<div class="alert alert-' + type + ' fade show" role="alert">' + text + '</div>');
+            $('.alert').alert();
+            window.scrollTo(0,0);
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 3000);
+        }
+        function hasDuplicates(arr){
+            return arr.some(x => arr.indexOf(x) !== arr.lastIndexOf(x));
+        }
+        $(document).on('click','.remove-btn',function () {
+            var counter = $('.remove-btn').length;
+            if(counter === 0){
+                console.log('No se  puede eliminar');
+            } else {
+                if($(this).closest('li').length === 0){
+                    $(this).closest('fieldset.form-group').remove();
+                    $('.calcular-gastos').remove();
+                } else {
+                    $(this).closest('li').remove();
+                }
+                var counter = $('.remove-btn').length;
+                var cantidad = {{ cantidad_mp }};
+                if(counter !== cantidad){
+                    $('.add-another-collection-widget').css('display','block');
+                } else {
+                    $('.add-another-collection-widget').css('display','none');
+                }
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        //Estado final de la orden de reparacion (al cambiar)
+        $('select#orden_reparacion_estadoFinal').change(function(){
+            var valor = $('select#orden_reparacion_estadoFinal').val();
+            if(valor === 'NR') {
+                // Habilitar Observaciones finales y Dejar en Taller
+                $('input#orden_reparacion_dejarEnTaller').removeAttr('disabled');
+                $('input[data-activates="select-options-orden_reparacion_observacionesFinales"]').removeAttr('disabled');
+                $('input[data-activates="select-options-orden_reparacion_observacionesFinales"]').attr('required', 'required');
+                $('select#orden_reparacion_observacionesFinales').removeAttr('disabled');
+                $('select#orden_reparacion_observacionesFinales').attr('required', 'required');
+                {% if orden_reparacion.ordenTrabajo.esReparacion == false %}
+                $('#orden_reparacion_observaciones').attr('required', 'required');
+                $('label[for="orden_reparacion_observaciones"]').addClass('required');
+                {% endif %}
+                //Inhabilitar
+                $('input#orden_reparacion_gastoMateriales').attr('disabled', 'disabled');
+                $('input#orden_reparacion_materialesUsados').attr('disabled', 'disabled');
+                $('input#orden_reparacion_diasGarantia').attr('disabled', 'disabled');
+                $("#orden_reparacion_ingreso").attr('disabled','disabled');
+                $("#orden_reparacion_ingreso").removeAttr('required');
+                // Ocultar
+                $("#materialesUsados-input").css('display', 'none');
+                $("#gastoMateriales-input").css('display', 'none');
+                $("#diasGarantia-input").css('display', 'none');
+                $("#ingreso-input").css('display', 'none');
+                //Mostrar Observaciones finales y Dejar en Taller
+                $("#dejarEnTaller-input").css('display', 'block');
+                $("#observacionesFinales-input").css('display', 'block');
+            } else {
+                // Deshabilitar Observaciones finales y Dejar en Taller
+                $('input#orden_reparacion_dejarEnTaller').attr('disabled', 'disabled');
+                $('input[data-activates="select-options-orden_reparacion_observacionesFinales"]').attr('disabled', 'disabled');
+                $('select#orden_reparacion_observacionesFinales').attr('disabled', 'disabled');
+                $('input[data-activates="select-options-orden_reparacion_observacionesFinales"]').removeAttr('required');
+                $('select#orden_reparacion_observacionesFinales').removeAttr('required');
+                // Reiniciar los valores
+                $('input[data-activates="select-options-orden_reparacion_observacionesFinales"]').val('Seleccione');
+                $('input#orden_reparacion_dejarEnTaller').prop('checked', false);
+                $('input#orden_reparacion_materialesUsados').val('');
+                $('input#orden_reparacion_gastoMateriales').val('0');
+                $('input#orden_reparacion_diasGarantia').val('0');
+                $("#orden_reparacion_ingreso").val('');
+                // Ocultar Observaciones finales y Dejar en Taller
+                $("#dejarEnTaller-input").css('display', 'none');
+                $("#observacionesFinales-input").css('display', 'none');
+                // Mostrar materiales usados y dias de garantia
+                $("#materialesUsados-input").css('display', 'block');
+                $("#gastoMateriales-input").css('display', 'block');
+                $("#diasGarantia-input").css('display', 'block');
+                //Importe del servicio sera nulo
+                $("#orden_reparacion_ingreso").val(null);
+                //Habilitar materiales usados y dias de garantia
+                $('input#orden_reparacion_materialesUsados').removeAttr('disabled');
+                $('input#orden_reparacion_gastoMateriales').removeAttr('disabled');
+                $('input#orden_reparacion_diasGarantia').removeAttr('disabled');
+                $('input#orden_reparacion_ingreso').removeAttr('disabled');
+
+                $("#orden_reparacion_ingreso").attr('required', 'required');
+                $("#ingreso-input").css('display', 'block');
+                {% if orden_reparacion.ordenTrabajo.esReparacion == false %}
+                    $('#orden_reparacion_observaciones').removeAttr('required');
+                    $('label[for="orden_reparacion_observaciones"]').removeClass('required');
+                {% endif %}
+            }
+        });
+    </script>
+{% endblock %}

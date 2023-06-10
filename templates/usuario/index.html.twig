@@ -1,0 +1,72 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {% set options = "" %}
+    {%  set options = options ~ '<a class="user-status" href="' ~ path('usuario_index',{'estado' : 'activo' }) ~ '"> Activos <span class="badge info-color">' ~ render(controller('App\\Controller\\UsuarioController:cantidadAction', { 'estado': 'activo' })) ~ '</span></a>' %}
+    {%  set options = options ~ '<a class="user-status" href="' ~ path('usuario_index',{'estado' : 'inactivo' }) ~ '"> Inactivos <span class="badge info-color">' ~ render(controller('App\\Controller\\UsuarioController:cantidadAction', { 'estado': 'inactivo' })) ~ '</span></a>' %}
+
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Usuarios',
+        'link' : {
+            'new' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('usuario_new') : '#',
+            'ops' : {
+                'print' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? '' : '#',
+                'export' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? '' : '#',
+                'import' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? '' : '#'
+            },
+            'options' : {
+                'name' : 'Usuarios a mostrar',
+                'links' : options
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <table id="datos-multi-select-all" class="table table-xs">
+        <thead>
+        <tr>
+            <th>Identificador</th>
+            <th>Pertenece a</th>
+            <th>Roles</th>
+            <th data-orderable="false"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.username }}</td>
+                <td>{{ usuario.nombreCompleto }}</td>
+                <td>
+                    {%  if usuario.userRoles is defined  %}
+                        {% for rol in usuario.userRoles %}
+                            <li>{{ rol.nombre }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <i>Sin roles</i>
+                    {% endif %}
+                </td>
+                <td>
+                    <ul>
+                        {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                            'link' : {
+                                'show' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('usuario_show', { 'id': usuario.id }) : '#',
+                                'edit' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('usuario_edit', { 'id': usuario.id }) : '#',
+                                'delete' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('usuario_delete', { 'id': usuario.id }) : '#'
+                            },
+                            'delete_id' : usuario.id
+                        }) }}
+                    </ul>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">No hay usuarios registrados</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}

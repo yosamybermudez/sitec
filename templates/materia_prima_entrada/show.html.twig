@@ -1,0 +1,67 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Entrada de materias primas',
+        'link' : {
+            'back' : path('materia_prima_entrada_index'),
+            'ops' : is_granted('ROLE_ADMINISTRACION') ? {
+                'edit' : path('materia_prima_entrada_edit', { 'id': materia_prima_entrada.id }),
+                'delete' : null,
+                'print' : path('materia_prima_entrada_imprimir', { 'id': materia_prima_entrada.id }),
+            } : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <table class="table table-xs no-first-border">
+            <tbody>
+            <tr>
+                <th>Movimientos realizados</th>
+                <td>
+                    <table class="table table-xs w-100">
+                        <thead>
+                        <th>Materia prima</th>
+                        <th>Cantidad</th>
+                        <th>Importe</th>
+                        <th>Existencias</th>
+                        </thead>
+                        <tbody>
+                        {% for item in materia_prima_entrada.movimientosMateriaPrima %}
+                            <tr>
+                                <td><a href="{{ path('materia_prima_show', {'id': item.materiaPrima.id}) }}">{{ item.materiaPrima.nombrePrecio }}</a></td>
+                                <td class="text-center">{{ item.cantidad }}</td>
+                                <td>$ {{ (item.materiaPrima.precio * item.cantidad) | number_format(2,'.',' ') }}</td>
+                                <td class="text-center">{{ item.cantidadRestante }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th>Movimiento asociado</th>
+                <td><a href="{{ path('materia_prima_movimiento_show', {'id': materia_prima_entrada.movimientosMateriaPrima[0].id}) }}">{{ materia_prima_entrada.movimientosMateriaPrima[0].nroMovimiento }}</a></td>
+            </tr>
+            <tr>
+                <th>Importe total</th>
+                <td>$ {{ materia_prima_entrada.importeTotal | number_format(2,'.',' ') }}</td>
+            </tr>
+            {% if materia_prima_entrada.vendedorNombre and materia_prima_entrada.vendedorCarneIdentidad %}
+            <tr>
+                <th>Datos del vendedor</th>
+                <td>{{ materia_prima_entrada.vendedorNombre }}<br>CI: {{ materia_prima_entrada.vendedorCarneIdentidad }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <th>Realizada por</th>
+                <td>{{ materia_prima_entrada.realizadaPor.nombreCompleto }}</td>
+            </tr>
+            </tbody>
+        </table>
+        {{ include('_mdb/mdb_metadata.html.twig', {'elem' : materia_prima_entrada }) }}
+    </div>
+
+{% endblock %}

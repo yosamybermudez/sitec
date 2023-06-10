@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{{ system_title }}</title>
+    <!-- MDB icon -->
+    <link rel="shortcut icon" href="{{ asset('assets/favicon.png') }}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('assets/fonts/fontawesome/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/fonts/glyphicons/glyphicons.css') }}">
+    <!-- Bootstrap core CSS -->
+{#    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap4.min.css') }}">#}
+    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/bootstrap.min.css') }}">
+    <!-- Material Design Bootstrap -->
+    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/mdb.min.css') }}">
+    {#    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/mdb.lite.min.css') }}">#}
+{#    <!-- Colores institucionales -->#}
+{#    <link rel="stylesheet" href="{{ asset('assets/institucional/colors.css') }}">#}
+    <!-- Datatables -->
+    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/addons/datatables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/addons/datatables-select.min.css') }}">
+    <!-- Your custom styles (optional) -->
+    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/styles-all.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/other/spinner.css') }}">
+    {% block head %} {% endblock %}
+</head>
+<body class="grey lighten-3">
+<!-- Loading -->
+{% include 'assets_views/spinner.html.twig' %}
+<!-- Navbar -->
+{{ include('_mdb/mdb_nav.html.twig') }}
+<!-- Sidebar -->
+<header>
+    {{ include('_mdb/mdb_sidebar.html.twig') }}
+</header>
+<!-- Start your project here-->
+<div class="col-12">
+    <div class="row">
+        <div class="col-3">
+            <!-- Vertical Steppers -->
+            <div class="row mt-1">
+                <div class="col-md-12">
+                    <!-- Stepers Wrapper -->
+                    <ul class="stepper stepper-vertical">
+                        <li class="{{ step_0 }}">
+                            <a>
+                                <span class="circle">1</span>
+                                <span class="label">Bienvenido al sistema</span>
+                            </a>
+                        </li>
+                        <li class="{{ step_1 }}">
+                            <a>
+                                <span class="circle">2</span>
+                                <span class="label">Datos del usuario <b>admin</b></span>
+                            </a>
+                            {#                    <!-- Section Description -->#}
+                            {#                    <div class="step-content grey lighten-3">#}
+                            {#                    </div>#}
+                        </li>
+                        <li class="{{ step_2 }}">
+                            <!--Section Title -->
+                            <a>
+                                <span class="circle">3</span>
+                                <span class="label">Datos generales de la empresa</span>
+                            </a>
+                            {#                    <!-- Section Description -->#}
+                            {#                    <div class="step-content grey lighten-3">#}
+                            {#                    </div>#}
+                        </li>
+                        <li class="{{ step_3 }}">
+                            <!--Section Title -->
+                            <a>
+                                <span class="circle">4</span>
+                                <span class="label">Datos específicos</span>
+                            </a>
+                            {#                    <!-- Section Description -->#}
+                            {#                    <div class="step-content grey lighten-3">#}
+                            {#                    </div>#}
+                        </li>
+                        <li class="{{ step_4 }}">
+                            <!--Section Title -->
+                            <a>
+                                <span class="circle">4</span>
+                                <span class="label">Datos del director general</span>
+                            </a>
+                        </li>
+                        <!-- Fifth Step -->
+                        <li class="{{ step_5 }}">
+                            <!--Section Title -->
+                            <a>
+                                <span class="circle">6</span>
+                                <span class="label">Finalizar configuración</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.Stepers Wrapper -->
+                </div>
+            </div>
+        </div>
+        <div class="container col-9">
+            {% block form_start %} {% endblock %}
+            <div class="row">
+                <div class="col-12" id="pagetop-fluid">
+                    {% block pagetop_fluid %}
+
+                    {% endblock %}
+                </div>
+                <div class="col-12" id="pagetop-options">
+                    {% block pagetop_options %}
+
+                    {% endblock %}
+                </div>
+                <div class="col-12 z-depth-0" id="body-fluid">
+                    {% block body_fluid %}
+
+                    {% endblock %}
+                </div>
+                {% block form_end %} {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End your project here-->
+
+<!-- jQuery -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/jquery.min.js') }}"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/popper.min.js') }}"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/bootstrap.min.js') }}"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/mdb.min.js') }}"></script>
+<!-- Your custom scripts (optional) -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/mdb.document.ready.js') }}"></script>
+<!-- My custom JS -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/custom.samy.js') }}"></script>
+<!-- Datatables -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/addons/datatables.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/addons/datatables-select.min.js') }}"></script>
+<script type="text/javascript">
+    let options =
+        {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "md-toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": 300,
+            "hideDuration": 1000,
+            "timeOut": 2000,
+            "extendedTimeOut": 1000,
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+    {% if app.flashes is defined %}
+        {% for label, messages in app.flashes %}
+            {% for flash_message in messages %}
+                showToastMessage('{{ label }}','{{ flash_message }}');
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+</script>
+{% block script %}
+
+{% endblock %}
+</body>
+</html>

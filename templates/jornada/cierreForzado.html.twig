@@ -1,0 +1,22 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Trabajos pendientes. Día ' ~ jornada.fecha | date('d/m/Y'),
+        'link' : {
+            'back' : path('jornada_show_hoy'),
+            'personalized' : is_granted('ROLE_RECEPCIONISTA') ? {
+                'path' :  path('jornada_cerrar_forzado', {'id' : jornada.id }),
+                'icon' : 'off',
+                'text' : 'Cerrar jornada'
+            } : '#',
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <p>Los siguientes trabajos, entraron hoy y no se especificó que se quedaban en el taller. Puede cerrar la jornada forzadamente, y los trabajos que queden serán registrados como que se quedan en taller.</p>
+    {{ include('orden_trabajo/index-Table.html.twig') }}
+</div>
+{% endblock %}

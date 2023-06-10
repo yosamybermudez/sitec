@@ -1,0 +1,80 @@
+{% extends 'assets_views/document.html.twig' %}
+
+{% set footer = 'Servicios Integrales Tecnológicos – Esquina de Tejas entre 10 de octubre y San Joaquín – Teléfono: 78795048' %}
+
+{% block document %}
+    <table class="table table-xs">
+        <thead>
+        <tr>
+            <th colspan="10">
+                <table class="table-bordered" style="background-color: white; table-layout: fixed; width: 100%;">
+                    <tr>
+                        <td rowspan="3" colspan="1" class="p-3 pb-0">
+                            <img src="{{ app.request.schemeAndHttpHost }}{{ asset('assets/institucional/sitec-logo-horizontal.jpg') }}" style="width: 100%;">
+                        </td>
+                        <td rowspan="3" colspan="4" class="text-blue-sitec p-3 pb-0" style="font-weight: bold; text-transform: uppercase; font-size: 20px; text-align: center;">
+                            <h3>Órdenes de trabajo<br> Fecha: {{ fecha }} </h3>
+                        </td>
+                    </tr>
+                </table>
+                <div class="text-center p-1 institucional-text"><small>{{ footer }}</small></div>
+            </th>
+        </tr>
+        <tr>
+            <th>No. Orden</th>
+            <th>Fecha/Hora de entrada</th>
+            <th>Nombre(s) y Apellidos / Carné identidad / Télefono (Cliente)</th>
+            <th>Equipo</th>
+            <th>Motivo visita</th>
+            <th>Asignada a</th>
+            <th>Estado</th>
+            <th>Ingreso</th>
+            <th>Gasto</th>
+            <th>Dias en taller / Dias notific.</th>
+        </tr>
+        <tbody>
+        {% for orden_trabajo in orden_trabajos %}
+            <tr>
+                <td>{{ orden_trabajo.nroOrden }}</td>
+                <td data-order="{{ orden_trabajo.fechaEntrada|date('YmdHis') }}">{{ orden_trabajo.fechaEntrada ? orden_trabajo.fechaEntrada|date('d/m/Y h:i:s a') : '' }}</td>
+                <td>{{ orden_trabajo.clienteNombreCompleto }} / {{ orden_trabajo.clienteCarneIdentidad }} / {{ orden_trabajo.clienteTelefonosContacto }}</td>
+                <td>{{ orden_trabajo.equipoTipo.nombre }} / {{ orden_trabajo.equipoMarca }} {{ orden_trabajo.equipoModelo }}</td>
+                <td>{{ orden_trabajo.motivoVisita }}</td>
+                <td>{% if orden_trabajo.tecnicoRepara %}{{ orden_trabajo.tecnicoRepara.nombres }}{% else %}Sin asignación{% endif %}</td>
+                <td>{{ orden_trabajo.estado | traducirSiglas }}
+                    {% if orden_trabajo.estado in ['ESP', 'ECT'] %}
+                        {% set tiempoEspera = date(orden_trabajo.fechaEntrada|date('Y/m/d h:i:s')).diff(date('now'|date('Y/m/d h:i:s'))) %}
+                        <span class="glyphicon glyphicon-time"></span>: ({{ tiempoEspera.h }}h {{ tiempoEspera.i }}m {{ tiempoEspera.s }}s)
+                    {% endif %}
+                    {% if orden_trabajo.estado == 'CF' %}
+                        {% set tiempoEsperado = date(orden_trabajo.fechaEntrada|date('Y/m/d h:i:s')).diff(date(orden_trabajo.fechaSalida|date('Y/m/d h:i:s'))) %}
+                        <span class="glyphicon glyphicon-info-sign"></span>: ({{ tiempoEsperado.h }}h {{ tiempoEsperado.i }}m {{ tiempoEsperado.s }}s)
+                    {% endif %}
+                    {{ orden_trabajo.observacionesFinales is null ? '' : orden_trabajo.observacionesFinales == 'R' ? '<span class="text-success glyphicon glyphicon-ok"></span>' : '<span class="text-danger glyphicon glyphicon-remove"></span>' }}
+                </td>
+                {% set orep = orden_trabajo.ordenReparacion %}
+                <td class="no-wrap text-right">$ {{ (orep ? orep.ingreso : 0 ) | number_format(2,'.',' ') }}</td>
+                <td class="no-wrap text-right">$ {{ (orep ? (orep.gastoMateriales + orep.otrosGastos) : 0  ) | number_format(2,'.',' ') }}</td>
+                <td>
+                    {% if not orden_trabajo.fechaSalida %}
+                        {% set diasEnTaller = date(orden_trabajo.fechaEntrada|date('Y/m/d')).diff(date('now'|date('Y/m/d'))) %}
+                    {% else %}
+                        {% set diasEnTaller = date(orden_trabajo.fechaEntrada|date('Y/m/d')).diff(date(orden_trabajo.fechaSalida|date('Y/m/d')|date('Y/m/d'))) %}
+                    {% endif %}
+                    {% if diasEnTaller.invert %} No ha entrado {% else %} {{ diasEnTaller.days }} día{% if diasEnTaller.days != 1 %}s{% endif %}{% endif %}
+                    {% if orden_trabajo.estado == 'N' %}
+                        {% set diasDeRecogida = orden_trabajo.fechaListoEntregar.diff(date('now'|date('Y/m/d'))) %}
+                        / {{ diasDeRecogida.days }} día{% if diasDeRecogida.days != 1 %}s{% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="7" class="pr-4 text-right"><b>Totales</b></td>
+            <td class="text-right no-wrap">$ {{ ingreso | number_format(2,'.',' ') }}</td>
+            <td class="text-right no-wrap">$ {{ gasto | number_format(2,'.',' ') }}</td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

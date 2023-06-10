@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{{ system_title }}</title>
+    <!-- MDB icon -->
+    <link rel="shortcut icon" href="{{ asset('assets/favicon.png') }}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('assets/fonts/fontawesome/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/fonts/glyphicons/glyphicons.css') }}">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/bootstrap.min.css') }}">
+    <!-- Material Design Bootstrap -->
+    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/mdb.min.css') }}">
+    {#    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/mdb.lite.min.css') }}">#}
+{#    <!-- Colores institucionales -->#}
+{#    <link rel="stylesheet" href="{{ asset('assets/institucional/colors.css') }}">#}
+    <!-- Datatables -->
+    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/addons/datatables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/addons/datatables-select.min.css') }}">
+    <!-- Your custom styles (optional) -->
+    <link rel="stylesheet" href="{{ asset('assets/mdb4pro/css/styles-all.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/other/spinner.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/institucional/color.css') }}">
+    {% block head %} {% endblock %}
+    <style>
+        .md-toast{
+            margin-top: 10px!important;
+        }
+    </style>
+</head>
+<body class="grey lighten-3">
+<!-- Loading -->
+{% include 'assets_views/spinner.html.twig' %}
+<!-- Navbar -->
+{{ include('_mdb/mdb_nav.html.twig', {'nav_display' : 'display: block;'}) }}
+<!-- Sidebar -->
+<header>
+    {{ include('_mdb/mdb_sidebar.html.twig') }}
+</header>
+<!-- Start your project here-->
+<div class="container">
+
+    {% block form_start %} {% endblock %}
+    <div class="row">
+        <div class="col-12" id="pagetop-fluid">
+            {% block pagetop_fluid %}
+
+            {% endblock %}
+        </div>
+        <div class="col-12" id="pagetop-options">
+            {% block pagetop_options %}
+
+            {% endblock %}
+        </div>
+        <div class="col-12 z-depth-0" id="body-fluid">
+            {% block body_fluid %}
+
+            {% endblock %}
+        </div>
+
+
+{#        <div class="col-12" id="pagetop">#}
+{#            <div class="col-10 float-right pr-0">#}
+{#                {% block pagetop %}#}
+
+{#                {% endblock %}#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="col-2" id="body-left">#}
+{#            {%  block left %}#}
+
+{#            {% endblock %}#}
+{#        </div>#}
+{#        <div class="col-10" id="body-content">#}
+{#            {% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Titulo de prueba',
+        'link' : {
+            'back' : path('homepage')
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}#}
+
+{#            {% endblock %}#}
+{#        </div>#}
+{#    </div>#}
+    {% block form_end %} {% endblock %}
+</div>
+</div>
+<!-- End your project here-->
+
+<!-- jQuery -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/jquery.min.js') }}"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/popper.min.js') }}"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/bootstrap.min.js') }}"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/mdb.min.js') }}"></script>
+<!-- Your custom scripts (optional) -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/mdb.document.ready.js') }}"></script>
+<!-- My custom JS -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/custom.samy.js') }}"></script>
+<!-- Datatables -->
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/addons/datatables.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('assets/mdb4pro/js/addons/datatables-select.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('assets/js/chart/Chart.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('assets/js/chart/utils.js') }}"></script>
+<script type="text/javascript">
+    let options =
+        {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "md-toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": 300,
+            "hideDuration": 1000,
+            "timeOut": 2000,
+            "extendedTimeOut": 1000,
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+    {% if app.flashes is defined %}
+        {% for label, messages in app.flashes %}
+            {% for flash_message in messages %}
+                var a = '{{ flash_message }}';
+                showToastMessage('{{ label }}','{{ flash_message }}', a.length > 50 ? 5000 : 2000);
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+</script>
+{% block script %}
+
+{% endblock %}
+</body>
+</html>

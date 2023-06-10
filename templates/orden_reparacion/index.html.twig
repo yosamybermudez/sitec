@@ -1,0 +1,78 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% set inicio = fecha_inicio is defined and fecha_inicio is not null ? fecha_inicio | date('Ymd') : null %}
+    {% set fin = fecha_fin is defined and fecha_fin is not null ? fecha_fin | date('Ymd') : null %}
+    {% if (inicio is null) and (fin is not null) %} {% set params = { 'fin' : fin } %}
+    {% elseif (fin is null) and (inicio is not null) %} {% set params = { 'inicio' : inicio } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio != fin ) %} {% set params = { 'inicio' : inicio, 'fin' : fin } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio == fin ) %} {% set params = { 'fecha' : inicio } %}
+    {% else %}
+        {% set params = {  } %}
+{% endif %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Diagnósticos realizados. Fecha: ' ~ fecha,
+        'link' : {
+            'new' : is_granted('ROLE_TECNICO') ? path('orden_trabajo_new') : '#',
+            'ops' : {
+                'print' : is_granted('ROLE_ADMINISTRACION') ? path('orden_reparacion_exportar_pdfexcel_rango', params | merge({'tipo' : 'pdf'}) ) : '#',
+                'export' : is_granted('ROLE_ADMINISTRACION') ? path('orden_reparacion_exportar_pdfexcel_rango', params | merge({'tipo' : 'excel'}) ) : '#',
+                'preview' : is_granted('ROLE_ADMINISTRACION') ? path('orden_reparacion_exportar_pdfexcel_rango', params | merge({'tipo' : 'excel'}) ) : '#',
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    {% set content = include('orden_reparacion/indexPDF.html.twig') %}
+    {% include('_mdb/mdb_preview_modal.html.twig') with { 'content' : content, 'print' : is_granted('ROLE_ADMINISTRACION') ? path('orden_reparacion_exportar_pdfexcel_rango', params | merge({'tipo' : 'pdf'}) ) : '#' } %}
+    {% include '_mdb/mdb_date_start_end_find.html.twig' with {'action' : path('orden_reparacion_index'), 'elem' : orden_reparacions , 'title' : 'Desglose de diagnósticos realizados'} %}
+    <div>
+        <table id="datos-multi-select-desc-0" class="table table-xs">
+            <thead>
+                <tr>
+                    <th>Fecha de revisión</th>
+                    <th>Orden de trabajo</th>
+                    <th>Revisado por</th>
+                    <th>Materiales usados</th>
+                    <th>Ingreso</th>
+                    <th>Gasto</th>
+                    <th>Estado</th>
+                    <th data-orderable="false"></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for orden_reparacion in orden_reparacions %}
+                <tr>
+                    <td data-order="{{ orden_reparacion.updated ? orden_reparacion.updated|date('Ymdhis') : '' }}" class="no-wrap">{{ orden_reparacion.updated ? orden_reparacion.updated|date('d/m/Y H:i:s') : '' }}</td>
+                    <td>{{ orden_reparacion.ordenTrabajo.nroOrden }}</td>
+                    <td>{{ orden_reparacion.ordenTrabajo.tecnicoRepara.nombreCompleto }}</td>
+                    <td>{{ orden_reparacion.materialesUsados }}</td>
+                    <td class="text-right">$ {{ orden_reparacion.ingreso | number_format(2,'.',' ') }}</td>
+                    <td class="text-right">$ {{ (orden_reparacion.gastoMateriales + orden_reparacion.otrosGastos )| number_format(2,'.',' ') }}</td>
+                    <td>{{ orden_reparacion.estadoFinal | traducirSiglas }}
+                    <td>
+                        <ul>
+                            {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                                'link' : {
+                                    'show' : path('orden_reparacion_show', { 'id': orden_reparacion.id }),
+                                    'edit' : is_granted('ROLE_TECNICO') or is_granted('ROLE_ADMINISTRACION') ? path('orden_reparacion_edit', { 'id': orden_reparacion.id }) : '#',
+                                    'delete' : '#'
+                                },
+                                'delete_id' : orden_reparacion.id
+                            }) }}
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+   {{ include('_mdb/mdb_chart_data_script.html.twig') }}
+{% endblock %}

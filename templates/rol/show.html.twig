@@ -1,0 +1,44 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Rol',
+        'link' : {
+            'back' : path('rol_index'),
+            'ops' : is_granted('ROLE_ADMINISTRADOR_SISTEMA') ? {
+                'edit' : path('rol_edit', { 'id': rol.id }),
+                'delete' : null
+            } : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <table class="table no-first-border table-xs">
+            <tbody>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ rol.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Descripción</th>
+                <td>{{ rol.descripcion }}</td>
+            </tr>
+            <tr>
+                <th>Usuarios</th>
+                <td>
+                    {% if rol.usuarios is defined %}
+                        {% for usuario in rol.usuarios %}
+                            <li>{{ usuario.username }}</li>
+                        {% else %}
+                            El rol no tiene usuarios asignados
+                        {% endfor %}
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        {{ include('_mdb/mdb_delete_modal.html.twig') }}
+    </div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Titulo de prueba',
+        'link' : {
+            'back' : path('homepage')
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div style="text-align: center;">
+        <img src="{{ asset('assets/zondicons/information-outline.svg') }}" style=" height: 90px; margin-right: 0px auto;">
+        <h1 style="padding-bottom: 10px;">
+            {% if message is defined %}
+
+            {% else %}
+                {{ mensaje }}
+            {% endif %}
+        </h1>
+        {% if detalle is defined and detalle is not null %}
+        <div class="alert alert-danger">
+                <h3 style="margin-top: 0">Detalles del error</h3>
+                    {{ detalle }}
+        </div>
+        {% endif %}
+        <div class="alert alert-danger">
+            {% if code is defined and code is not null %}
+                <h3 style="margin-top: 0">Detalles al desarrollador</h3>
+                <code>
+                    {{ code }}
+                </code>
+            {% endif %}
+        </div>
+        <a class="btn btn-primary" href="{{ app.request.headers.get('referer') }}">Volver a la página anterior</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Movimiento de materias primas',
+        'link' : {
+            'back' : path('materia_prima_entrada_index'),
+            'ops' : is_granted('ROLE_ADMINISTRACION') ? {
+                'print' : path('materia_prima_movimiento_imprimir', { 'id' : materia_prima_movimiento[0].id }),
+                'delete' : '#'
+            } : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <table class="table no-first-border table-xs">
+            <tr>
+                <th>Nro. Movimiento</th>
+                <td>{{ materia_prima_movimiento[0].nroMovimiento }}</td>
+            </tr>
+        <tr>
+            <th>Tipo</th>
+            <td>{{ materia_prima_movimiento[0].tipo | traducirSiglas }}</td>
+        </tr>
+        <tr>
+            <th>Motivo</th>
+            <td>
+                {% if materia_prima_movimiento[0].ordenReparacion is not null %}
+                    Orden de trabajo
+                {% elseif materia_prima_movimiento[0].entradaMateriaPrima is not null %}
+                    Entrada de materiales
+                {% endif %}
+            </td>
+        </tr>
+            <tr style="border-top: 3px solid #dee2e6;">
+                <th>Nombre</th>
+                <th>Cantidad</th>
+            </tr>
+            {% for mmp in materia_prima_movimiento %}
+                <tr>
+                    <td>{{ mmp.materiaPrima.nombre }}</td>
+                    <td>{{ mmp.cantidad }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {{ include('_mdb/mdb_metadata.html.twig', {'elem' : materia_prima_movimiento[0]}) }}
+</div>
+{% endblock %}

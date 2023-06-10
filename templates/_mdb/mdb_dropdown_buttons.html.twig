@@ -1,0 +1,20 @@
+<div class="dropdown">
+    <button class="btn btn-flat btn-sm dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false" style="margin: 0;"><span class="glyphicon glyphicon-option-vertical"></span></button>
+    <div class="dropdown-menu dropdown-primary">
+    {% if link['show'] is defined %}
+        <a class="dropdown-item btn-load act-spinner" href="{{ link['show'] }}"><i class="glyphicon glyphicon-eye-open text-primary mr-2"></i> Ver</a>
+    {% endif %}
+    {% if link['edit'] is defined %}
+        <a class="dropdown-item btn-load act-spinner" href="{{ link['edit'] }}"><i class="glyphicon glyphicon-pencil text-secondary mr-2"></i> Editar</a>
+    {% endif %}
+    {% if link['delete'] is defined  %}
+        <a
+                {% if delete_id is defined %}
+                data-modal={{ delete_id }}
+                {% endif %}
+                data-form-action= {{ link['delete'] }}
+                class="dropdown-item btn-load act-spinner" data-toggle="modal" href="#indexDelete"><i class="glyphicon glyphicon-trash text-danger mr-2"></i> Eliminar</a>
+    {% endif %}
+    </div>
+</div>

@@ -1,0 +1,57 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+
+    {% set inicio = fecha_inicio is defined and fecha_inicio is not null ? fecha_inicio | date('Ymd') : null %}
+    {% set fin = fecha_fin is defined and fecha_fin is not null ? fecha_fin | date('Ymd') : null %}
+    {% if (inicio is null) and (fin is not null) %} {% set params = { 'fin' : fin } %}
+    {% elseif (fin is null) and (inicio is not null) %} {% set params = { 'inicio' : inicio } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio != fin ) %} {% set params = { 'inicio' : inicio, 'fin' : fin } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio == fin ) %} {% set params = { 'fecha' : inicio } %}
+    {% else %}
+        {% set params = {  } %}
+    {% endif %}
+
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Operaciones contables'~ (fecha is defined ? '. Fecha: ' ~ fecha),
+        'link' : {
+            'ops' : {
+                'print' : is_granted('ROLE_ADMINISTRACION') ? path('operacion_contable_exportar_pdfexcel_rango', params | merge({'tipo' : 'pdf'}) ) : '#',
+                'export' : is_granted('ROLE_ADMINISTRACION') ? path('operacion_contable_exportar_pdfexcel_rango', params | merge({'tipo' : 'excel'}) ) : '#',
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        {% include '_mdb/mdb_date_start_end_find.html.twig' with {'action' : path('operacion_contable_index')} %}
+        <div>
+            <table id="datos-multi-select-desc-0" class="table table-xs">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo operac.</th>
+                    <th>Código</th>
+                    <th>Descripción</th>
+                    <th>Saldo entrada</th>
+                    <th>Saldo salida</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for operacion in operacion_contables %}
+                    <tr>
+                        <td>{{ operacion.created | date('Y/m/d H:i:s') }}</td>
+                        <td>{{ operacion.tipoOperacion }}</td>
+                        <td>{{ operacion.codigo }}</td>
+                        <td>{{ operacion.descripcion }}</td>
+                        <td class="no-wrap">{% if operacion.tipoOperacion == 'CR' %}<span style="float: left;" class="glyphicon glyphicon-plus-sign text-success"></span> <span style="float: right;">$ {{ operacion.saldo | number_format(2,'.',' ')}}</span>{% endif %}</td>
+                        <td class="no-wrap">{% if operacion.tipoOperacion == 'DB' %}<span style="float: left;" class="glyphicon glyphicon-minus-sign text-danger"></span> <span style="float: right;">$ {{ operacion.saldo | number_format(2,'.',' ') }}</span>{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}

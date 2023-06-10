@@ -1,0 +1,18 @@
+{% extends 'assets_views/document.html.twig' %}
+
+{% set footer = 'Servicios Integrales Tecnológicos – Esquina de Tejas entre 10 de octubre y San Joaquín – Teléfono: 78795048' %}
+
+{% block document %}
+    <table class="table-bordered mb-3" style="background-color: white; table-layout: fixed; width: 100%;">
+        <tr>
+            <td rowspan="3" colspan="1">
+                <img src="{{ app.request.schemeAndHttpHost }}{{ asset('assets/institucional/sitec-logo-horizontal.jpg') }}" style="width: 150%;">
+            </td>
+            <td rowspan="3" colspan="4" class="text-blue-sitec" style="font-weight: bold; text-transform: uppercase; font-size: 20px; text-align: center;">
+                <h3>Reporte de trabajo {{ tipo }}</h3>
+                <h4>{{ start | date('d/m/Y') }} - {{ end | date('d/m/Y') }}</h4>
+            </td>
+        </tr>
+    </table>
+    {% include 'app_reportes/reporteHTML.html.twig' %}
+{% endblock %}

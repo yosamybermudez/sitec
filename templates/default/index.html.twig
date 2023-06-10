@@ -1,0 +1,18 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Bienvenido',
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <div class="row">
+            <div id="empresa-front-logo">
+                <img src="{{ asset('assets/institucional/sitec-logo.jpg') }}">
+            </div>
+        </div>
+        <p style="line-height: 150%; text-align: center;">SITEC es el Sistema que le servirá de Apoyo para la Gestión de los Procesos de su entidad</p>
+    </div>
+{% endblock %}

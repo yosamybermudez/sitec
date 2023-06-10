@@ -1,0 +1,19 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {% set options = "" %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Equipos a decomisar',
+        'link' : {
+
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <div class="mb-2">Los equipos mostrados en esta lista, llevan más de 60 días en espera de ser recogidos por el cliente. Al estos no presentarse, la entidad se reserva el derecho de decomisar los mismos.</div>
+    {{ include('orden_trabajo/index-Table.html.twig') }}
+</div>
+{{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}

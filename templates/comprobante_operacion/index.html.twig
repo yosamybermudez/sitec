@@ -1,0 +1,67 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+
+    {% set inicio = fecha_inicio is defined and fecha_inicio is not null ? fecha_inicio | date('Ymd') : null %}
+    {% set fin = fecha_fin is defined and fecha_fin is not null ? fecha_fin | date('Ymd') : null %}
+    {% if (inicio is null) and (fin is not null) %} {% set params = { 'fin' : fin } %}
+    {% elseif (fin is null) and (inicio is not null) %} {% set params = { 'inicio' : inicio } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio != fin ) %} {% set params = { 'inicio' : inicio, 'fin' : fin } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio == fin ) %} {% set params = { 'fecha' : inicio } %}
+    {% else %}
+        {% set params = {  } %}
+    {% endif %}
+
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Comprobantes de operaciones' ~ (fecha is defined ? '. Fecha: ' ~ fecha : ''),
+        'link' : {
+            'ops' : {
+                'print' : is_granted('ROLE_RECEPCIONISTA') ? path('comprobante_operacion_exportar_pdfexcel_rango', params | merge({'tipo' : 'pdf'}) ) : '#',
+                'export' : is_granted('ROLE_RECEPCIONISTA') ? path('comprobante_operacion_exportar_pdfexcel_rango', params | merge({'tipo' : 'excel'}) ) : '#',
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    {% include '_mdb/mdb_date_start_end_find.html.twig' with {'action' : path('comprobante_operacion_index')} %}
+    <div>
+        <table id="datos-multi-select-desc-0" class="table table-xs">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Nro. Comprobante</th>
+                <th>Tipo de operación</th>
+                <th>Equipo</th>
+                <th>Importe total</th>
+                <th>Gasto total</th>
+                <th>Técnico</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for comprobante_operacion in comprobante_operacions %}
+            <tr>
+                <td style="white-space: nowrap;" data-order="{{ comprobante_operacion.created | date('YmdHis') }}">{{ comprobante_operacion.created | date('d/m/Y h:i:s a') }}</td>
+                <td>{{ comprobante_operacion.nroComprobante }}</td>
+                <td style="white-space: nowrap;">{{ comprobante_operacion.tipoOperacion }}<br>{{ comprobante_operacion.ordenTrabajo.nroOrden }}</td>
+                <td>{{ comprobante_operacion.ordenTrabajo.datosEquipo}}</td>
+                <td class="text-right no-wrap">$ {{ comprobante_operacion.importeTotal | number_format(2,'.',' ') }}</td>
+                <td class="text-right no-wrap">$ {{ comprobante_operacion.gastosAsociados | number_format(2,'.',' ') }}</td>
+                <td>{{ comprobante_operacion.ordenTrabajo.ordenReparacion.revisadoPor.nombreCompleto }}</td>
+                <td>
+                    {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                        'link' : {
+                            'show' : is_granted('ROLE_RECEPCIONISTA') ? path('comprobante_operacion_show', { 'id': comprobante_operacion.id }) : '#',
+                        }
+                    }) }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+{{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}

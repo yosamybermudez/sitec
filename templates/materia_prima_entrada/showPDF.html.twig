@@ -1,0 +1,82 @@
+{% extends 'assets_views/document.html.twig' %}
+
+{% set footer = 'Servicios Integrales Tecnológicos – Esquina de Tejas entre 10 de octubre y San Joaquín – Teléfono: 78795048' %}
+
+{% block document %}
+    <div>
+        <table class="table-bordered mb-3" style="background-color: white; table-layout: fixed; width: 100%;">
+            <tr>
+                <td rowspan="3" colspan="1">
+                    <img src="{{ app.request.schemeAndHttpHost }}{{ asset('assets/institucional/sitec-logo-horizontal.jpg') }}" style="width: 150%;">
+                </td>
+                <td rowspan="3" colspan="4" class="text-blue-sitec" style="font-weight: bold; text-transform: uppercase; font-size: 20px; text-align: center;">
+                    <h3>Entrada de materias primas</h3>
+                    <h5>{{ materia_prima_entrada.movimientosMateriaPrima[0].nroMovimiento }}</h5>
+                </td>
+            </tr>
+        </table>
+        <div class="text-center mb-3 border-bottom p-1 institucional-text"><small>{{ footer }}</small></div>
+        <table class="table table-xs w-100">
+            <thead>
+            <th>Materia prima</th>
+            <th>Cantidad</th>
+            <th>Importe</th>
+            <th>Existencias</th>
+            </thead>
+            <tbody>
+            {% for item in materia_prima_entrada.movimientosMateriaPrima %}
+                <tr>
+                    <td>{{ item.materiaPrima.nombrePrecio }}</td>
+                    <td class="text-center">{{ item.cantidad }}</td>
+                    <td class="text-right">$ {{ (item.materiaPrima.precio * item.cantidad) | number_format(2,'.',' ') }}</td>
+                    <td class="text-center">{{ item.cantidadRestante }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2" class="bold">Total</td>
+                <td class="text-right">$ {{ materia_prima_entrada.importeTotal | number_format(2,'.',' ') }}</td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table no-first-border table-xs" style="position:absolute; top: 1100px;">
+            <tbody>
+            <tr>
+                <td class="p-1 text-center" width="50%">
+                    {% if materia_prima_entrada.vendedorNombre is not null %}
+                        Datos y firma de la persona que realiza la venta
+                    {% endif %}
+                </td>
+                <td class="p-1 text-center" width="50%">
+                    Datos y firma de la persona que recibe por la Administración
+                </td>
+            </tr>
+            <tr>
+                    <td class="p-1 pt-5" width="50%">
+                        {% if materia_prima_entrada.vendedorNombre is not null %}
+                        <div style="border-bottom: 1px solid black;"></div>
+                        {% endif %}
+                    </td>
+                <td class="p-1 pt-5" width="50%"><div style="border-bottom: 1px solid black;"></div></td>
+            </tr>
+            <tr>
+                <td class="p-1 text-center" width="50%">
+                    {% if materia_prima_entrada.vendedorNombre is not null %}
+                        {{ materia_prima_entrada.vendedorNombre }}<br>
+                        {{ materia_prima_entrada.vendedorCarneIdentidad }}<br>
+                    {% endif %}
+                </td>
+                <td class="p-1 text-center" width="50%">
+                    {{ materia_prima_entrada.realizadaPor.nombreCompleto }}<br>
+                    {% if materia_prima_entrada.realizadaPor.cargo is not null %}
+                        {{ materia_prima_entrada.realizadaPor.cargo.nombre }}<br>
+                    {% endif %}
+                    {% if materia_prima_entrada.realizadaPor.carneIdentidad is not null %}
+                        {{ materia_prima_entrada.realizadaPor.carneIdentidad }}<br>
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

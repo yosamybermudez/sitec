@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<title>Prueba index</title>
+
+{% block body %}
+    <h1>Prueba index</h1>
+
+    <table class="table table-xs">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Edad</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for prueba in pruebas %}
+            <tr>
+                <td>{{ prueba.id }}</td>
+                <td>{{ prueba.nombre }}</td>
+                <td>{{ prueba.edad }}</td>
+                <td>
+                    <a href="{{ path('prueba_show', {'id': prueba.id}) }}">show</a>
+                    <a href="{{ path('prueba_edit', {'id': prueba.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('prueba_new') }}">Create new</a>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Usuario',
+        'link' : {
+            'back' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('usuario_index', {'estado' : 'activo'}) : '#',
+            'ops' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? {
+                'edit' : path('usuario_edit', { 'id': usuario.id }),
+                'delete' : null
+            } : '#'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <table class="table no-first-border table-xs">
+            <tbody>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ usuario.username }}</td>
+            </tr>
+            <tr>
+                <th>Correo electrónico</th>
+                <td>{{ usuario.email }}</td>
+            </tr>
+            <tr>
+                <th>Roles</th>
+                <td>
+                    {% if usuario.userRoles is defined %}
+                        {% for rol in usuario.userRoles %}
+                            <li>{{ rol.nombre }}</li>
+                        {% endfor %}
+                    {% else %}
+                        El usuario no tiene rol asignado
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        {{ is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? include('_mdb/mdb_metadata.html.twig', {'elem' : usuario}) }}
+        {{ include('_mdb/mdb_delete_modal.html.twig') }}
+    </div>
+{% endblock %}

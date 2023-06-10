@@ -1,0 +1,40 @@
+{% extends '_mdb/mdb_base_without_sidebar.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Bienvenido(a)'
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white" style="padding: 20px 30px;">
+        <div class="row">
+            <div id="empresa-front-logo">
+                <img src="{{ asset('assets/institucional/sitec-logo.jpg') }}">
+            </div>
+        </div>
+{#        <p style="line-height: 150%; text-align: justify;">SITEC es el Sistema que le servirá de Apoyo para la Gestión de los Procesos de su entidad ????</b></p>#}
+            <div class="row">
+                {% for modulo in modulos %}
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6" style="margin: 10px 0;">
+                    {% if modulo.mostrar %}
+                        <a href="{{ modulo.enlace_directo }}"> <div class="card bg-primary text-white">
+                    {% else %}
+                        <div class="card">
+                    {% endif %}
+                            <div class="card-header">
+                                <img class="svg {% if modulo.mostrar %}svg-invert{% endif %}" src="{{ asset('assets/zondicons/' ~ modulo.icon ~ '.svg') }}">
+                                {% if modulo.mostrar == 0 %}
+                                    <img class="svg" src="{{ asset('assets/zondicons/lock-closed-dark-blue.svg') }}" style="position:relative; float: right;">
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ modulo.nombre }}</h5>
+                            </div>
+                        </div>
+                    {% if modulo.mostrar %}</a>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+    </div>
+{% endblock %}

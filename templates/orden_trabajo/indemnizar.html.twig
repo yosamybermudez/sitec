@@ -1,0 +1,41 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block form_start %}
+    {{ form_start(form) }}
+{% endblock %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Indemnizar post-garantía no solucionada',
+        'link' : {
+            'back' : path('jornada_index'),
+            'submit' : 'Confirmar'
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                <div class="clearfix">
+                    <div class="mb-2 text-justify">
+                        La orden de trabajo {{ orden_trabajo.nroOrden }} constituye la postgarantia de la orden de trabajo {{ orden_trabajo.garantiaOrdenPrincipal.nroOrden }}.
+                        El equipo se reparó por primera vez el {{ orden_trabajo.garantiaOrdenPrincipal.fechaRevision | fecha_es }} y salio del taller el dia {{ orden_trabajo.garantiaOrdenPrincipal.fechaSalida | fecha_es }} con {{ orden_trabajo.garantiaOrdenPrincipal.ordenReparacion.diasGarantia }} días de garantía.
+                        Posteriormente, vuelve al taller el {{ orden_trabajo.fechaEntrada | fecha_es }} y se dictamina que la garantia cubre con la reparacion, pero no se puede solucionar.
+                        Por lo que se decide devolver el importe abonado por el cliente.
+                    </div>
+                    <div class="mb-2"><div class="text-primary fw-500">Nombre y apellidos del cliente</div>{{ orden_trabajo.clienteNombreCompleto }}</div>
+                    <div class="mb-2"><div class="text-primary fw-500">Carné de identidad</div>{{ orden_trabajo.clienteCarneIdentidad }}</div>
+                    <div class="mb-2"><div class="text-primary fw-500">Teléfono(s) de contacto</div>{{ orden_trabajo.clienteTelefonosContacto }}</div>
+                    <div class="mb-2"><div class="text-primary fw-500">Importe a devolver</div>$ {{ orden_trabajo.garantiaOrdenPrincipal.ordenReparacion.ingreso | number_format(2,',','.') }}</div>
+                    {{ form_row(form.enviar) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block form_end %}
+    {{ form_row(form._token) }}
+   {% endblock %}

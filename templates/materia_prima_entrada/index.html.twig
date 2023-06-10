@@ -1,0 +1,114 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+
+    {% set inicio = fecha_inicio is defined and fecha_inicio is not null ? fecha_inicio | date('Ymd') : null %}
+    {% set fin = fecha_fin is defined and fecha_fin is not null ? fecha_fin | date('Ymd') : null %}
+    {% if (inicio is null) and (fin is not null) %} {% set params = { 'fin' : fin } %}
+    {% elseif (fin is null) and (inicio is not null) %} {% set params = { 'inicio' : inicio } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio != fin ) %} {% set params = { 'inicio' : inicio, 'fin' : fin } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio == fin ) %} {% set params = { 'fecha' : inicio } %}
+    {% else %}
+        {% set params = {  } %}
+    {% endif %}
+
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Entradas de materias primas. Fecha: ' ~ fecha,
+        'link' : {
+            'new' : is_granted('ROLE_ADMINISTRACION') ? path('materia_prima_entrada_new') : '#',
+            'ops' : {
+                'print' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('materia_prima_entrada_exportar_pdfexcel_rango', params | merge({'tipo' : 'pdf'}) ) : '#',
+                'export' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('materia_prima_entrada_exportar_pdfexcel_rango', params | merge({'tipo' : 'excel'}) ) : '#',
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    {% include '_mdb/mdb_date_start_end_find.html.twig' with {'action' : path('materia_prima_entrada_index')} %}
+    <table id="datos-multi-select-desc-0" class="table table-xs">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Nro. Movimiento</th>
+                <th>Realizada por</th>
+                <th>Movimientos realizados</th>
+                <th>Importe total</th>
+                <th data-sortable="false"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for materia_prima_entrada in materia_prima_entradas %}
+            <tr>
+                <td class="no-wrap" data-order="{{  materia_prima_entrada.created | date('YmdHis') }}">{{ materia_prima_entrada.created | date('d-m-Y h:i:s a') }}</td>
+                <td>{{ materia_prima_entrada.movimientosMateriaPrima[0].nroMovimiento }}</td>
+                <td>{{ materia_prima_entrada.realizadaPor.nombreCompleto }}</td>
+                <td class="text-right">
+                    <span class="badge badge-pill badge-currency badge-info">{{ materia_prima_entrada.nroMaterialesComprados }}</span>
+                    <button class="btn btn-sm btn-primary" data-toggle="modal" href="#materiales-{{ materia_prima_entrada.id }}"><span class="glyphicon glyphicon-eye-open"></span> Ver MP</button>
+                    <div class="modal fade" id="materiales-{{ materia_prima_entrada.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-notify modal-primary" role="document">
+                            <!--Content-->
+                            <div class="modal-content text-center">
+                                <!--Header-->
+                                <div class="modal-header d-flex justify-content-center">
+                                    <p class="heading">Materias primas</p>
+                                </div>
+                                <!--Body-->
+                                <div class="modal-body">
+                                    <table class="table table-xs w-100">
+                                        <thead>
+                                            <th>Materia prima</th>
+                                            <th>Cantidad</th>
+                                            <th>Importe</th>
+                                            <th>Existencias</th>
+                                        </thead>
+                                        <tbody>
+                                        {% for item in materia_prima_entrada.movimientosMateriaPrima %}
+                                            <tr>
+                                                <td>{{ item.materiaPrima.nombrePrecio }}</td>
+                                                <td class="text-center">{{ item.cantidad }}</td>
+                                                <td class="text-right">$ {{ (item.materiaPrima.precio * item.cantidad) | number_format(2,'.',' ') }}</td>
+                                                <td class="text-center">{{ item.cantidadRestante }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                            <th>Total</th>
+                                            <th class="text-center">{{ materia_prima_entrada.nroMaterialesComprados }}</th>
+                                            <th class="text-right">$ {{ materia_prima_entrada.importeTotal | number_format(2,'.',' ') }}</th>
+                                            <th></th>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <!--Footer-->
+                                <div class="modal-footer">
+                                    <a type="button" class="btn btn-danger btn-sm waves-effect" data-dismiss="modal">Cerrar</a>
+                                </div>
+                            </div>
+                            <!--/.Content-->
+                        </div>
+                    </div>
+                </td>
+                <td class="text-right no-wrap">$ {{ materia_prima_entrada.importeTotal | number_format(2,'.',' ') }}</td>
+                <td>
+                    <ul>
+                        {{ include ("_mdb/mdb_action_buttons.html.twig",{
+                            'link' : {
+                                'show' : is_granted('ROLE_ADMINISTRACION') ? path('materia_prima_entrada_show', { 'id': materia_prima_entrada.id }) : '#',
+                                'delete' : is_granted('ROLE_ADMINISTRADOR_NEGOCIO') ? path('materia_prima_entrada_delete', { 'id': materia_prima_entrada.id }) : '#',
+                                'print' : is_granted('ROLE_ADMINISTRACION') ? path('materia_prima_entrada_imprimir', { 'id': materia_prima_entrada.id }) : '#'
+                            },
+                            'delete_id' : materia_prima_entrada.id
+                        }) }}
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+</div>
+{% endblock %}
+

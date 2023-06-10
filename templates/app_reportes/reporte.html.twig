@@ -1,0 +1,81 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Reportes',
+        'link' : {
+            'ops' : {
+                'print' : is_granted('ROLE_RECEPCIONISTA') ? path('app_reportes_rangos_imprimir', { 'tipo' : tipo, 'fecha' : fecha | date('Ymd') }) : '#',
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <!-- Tabs navs -->
+    {%  set param = app.request.get('info') %}
+    <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a
+                    class="nav-link{{ tipo == 'diario' ? ' active' : ''}}"
+                    id="ex3-tab-1"
+                    data-mdb-toggle="tab"
+                    href="{{ path('app_reportes_rangos', { 'tipo' : 'diario' }) }}"
+                    role="tab"
+                    aria-controls="ex3-tabs-1"
+                    aria-selected="true"
+            >Reporte diario</a
+            >
+        </li>
+        <li class="nav-item" role="presentation">
+            <a
+                    class="nav-link{{ tipo == 'semanal' ? ' active' : ''}}"
+                    id="ex3-tab-1"
+                    data-mdb-toggle="tab"
+                    href="{{ path('app_reportes_rangos', { 'tipo' : 'semanal' }) }}"
+                    role="tab"
+                    aria-controls="ex3-tabs-1"
+                    aria-selected="true"
+            >Reporte semanal</a
+            >
+        </li>
+        <li class="nav-item" role="presentation">
+            <a
+                    class="nav-link{{ tipo == 'mensual' ? ' active' : ''}}"
+                    id="ex3-tab-2"
+                    data-mdb-toggle="tab"
+                    href="{{ path('app_reportes_rangos', { 'tipo' : 'mensual' }) }}"
+                    role="tab"
+                    aria-controls="ex3-tabs-2"
+                    aria-selected="false"
+            >Reporte mensual</a
+            >
+        </li>
+        <li class="nav-item" role="presentation">
+            <a
+                    class="nav-link{{ tipo == 'anual' ? ' active' : ''}}"
+                    id="ex3-tab-2"
+                    data-mdb-toggle="tab"
+                    href="{{ path('app_reportes_rangos', { 'tipo' : 'anual' }) }}"
+                    role="tab"
+                    aria-controls="ex3-tabs-2"
+                    aria-selected="false"
+            >Reporte anual</a
+            >
+        </li>
+        <li class="nav-item pl-2" role="presentation">
+            <form method="post">
+                <div class="form-inline">
+                    <div class="md-form" style="margin: 0;">
+                        <input class="form-control form-control-sm pull-left datepicker" name="fecha" placeholder="Fecha a buscar">
+                    </div>
+                    <button class="btn btn-primary btn-sm pull-left form-control" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                </div>
+            </form>
+        </li>
+    </ul>
+    <!-- Tabs navs -->
+    {% include 'app_reportes/reporteHTML.html.twig' %}
+</div>
+{% endblock %}

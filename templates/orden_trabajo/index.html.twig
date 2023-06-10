@@ -1,0 +1,51 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+
+    {% set inicio = fecha_inicio is defined and fecha_inicio is not null ? fecha_inicio | date('Ymd') : null %}
+    {% set fin = fecha_fin is defined and fecha_fin is not null ? fecha_fin | date('Ymd') : null %}
+    {% if (inicio is null) and (fin is not null) %} {% set params = { 'fin' : fin } %}
+    {% elseif (fin is null) and (inicio is not null) %} {% set params = { 'inicio' : inicio } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio != fin ) %} {% set params = { 'inicio' : inicio, 'fin' : fin } %}
+    {% elseif (fin is not null) and (inicio is not null) and (inicio == fin ) %} {% set params = { 'fecha' : inicio } %}
+    {% else %}
+        {% set params = {  } %}
+    {% endif %}
+
+    {% set options = "" %}
+    {%  set options = options ~ '<a class="dropdown-item" href="' ~ path('orden_trabajo_index', { 'fecha' : 'now' | date('Ymd') }) ~ '"><i class="fa fa-calendar text-secondary mr-2"></i>Órdenes de hoy</a>' %}
+    {%  set options = options ~ '<a class="dropdown-item" href="' ~ path('orden_trabajo_index',{ 'inicio' : ('now' | date('Ym')) ~ '01', 'fin' : ('now' | date('Ym')) ~ "now" | date_modify('last day of this month') | date('d') }) ~ '"><i class="fa fa-calendar text-secondary mr-2"></i>Órdenes del mes</a>' %}
+    {%  set options = options ~ '<a class="dropdown-item" href="' ~ path('orden_trabajo_index',{'inicio' : ('now' | date('Y'))~'0101', 'fin' : ('now' | date('Y'))~'1231'}) ~ '"><i class="fa fa-calendar text-secondary mr-2"></i>Órdenes del año en curso</a>' %}
+    {%  set options = options ~ '<a class="dropdown-item" href="' ~ path('orden_trabajo_index') ~ '"><i class="fa fa-list text-primary mr-2"></i>Todas las órdenes</a>' %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Órdenes de trabajo. Fecha : ' ~ fecha ,
+        'link' : {
+            'new' : is_granted('ROLE_RECEPCIONISTA') and jornadaCerrada is defined and jornadaCerrada == false ? path('orden_trabajo_new') : '#',
+            'reservac' : is_granted('ROLE_RECEPCIONISTA') ? path('orden_trabajo_reservar') : '#',
+            'ops' : {
+                'print' : is_granted('ROLE_ADMINISTRACION') ? path('orden_trabajo_exportar_pdfexcel_rango', params | merge({'tipo' : 'pdf'}) ) : '#',
+                'export' : is_granted('ROLE_ADMINISTRACION') ? path('orden_trabajo_exportar_pdfexcel_rango', params | merge({'tipo' : 'excel'}) ) : '#',
+            },
+            'options' : {
+                'name' : 'Órdenes a mostrar',
+                'links' : options
+            }
+        }
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+
+<div class="white">
+
+    {% include '_mdb/mdb_date_start_end_find.html.twig' with {'action' : path('orden_trabajo_index'), 'elem' : orden_trabajos , 'title' : 'Desglose de órdenes de trabajo'} %}
+    <div>
+        {% include 'orden_trabajo/index-Table.html.twig' %}
+    </div>
+</div>
+{{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}
+
+{% block script %}
+    {{ include('_mdb/mdb_chart_data_script.html.twig') }}
+{% endblock %}

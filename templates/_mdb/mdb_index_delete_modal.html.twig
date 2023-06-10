@@ -1,0 +1,27 @@
+<!--Modal: modalConfirmDelete-->
+<div class="modal fade" id="indexDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-danger" role="document">
+        <!--Content-->
+        <div class="modal-content text-center">
+            <!--Header-->
+            <div class="modal-header d-flex justify-content-center">
+                <p class="heading">¿Está seguro?</p>
+            </div>
+            <!--Body-->
+            <div class="modal-body">
+                Está a punto de eliminar el elemento. Tenga en cuenta que esta acción no se puede deshacer. Si está seguro presione <strong>Eliminar</strong>.
+                <br>
+                <i class="fas fa-times fa-4x animated rotateIn"></i>
+            </div>
+            <!--Footer-->
+            <div class="modal-footer flex-center">
+                <form method="post">
+                    <button class="btn btn-outline-danger" type="submit"><span class="glyphicon glyphicon-trash"></span> Eliminar</button>
+                </form>
+                <a type="button" class="btn btn-danger waves-effect" data-dismiss="modal">No</a>
+            </div>
+        </div>
+        <!--/.Content-->
+    </div>
+</div>

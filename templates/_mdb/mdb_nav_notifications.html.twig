@@ -1,0 +1,27 @@
+{% if ordenes | length > 0 %}
+<a
+   class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <img class="svg svg-invert" src="/sitec/public/assets/zondicons/chat-bubble-dots.svg" style="height: 22px;"></span>
+        <span class="badge badge-danger" style="position: relative; top: -3px;">{{ ordenes | length }}</span>
+</a>
+{% else %}
+<div
+        class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false" style="opacity: 0.5;">
+    <img class="svg svg-invert" src="/sitec/public/assets/zondicons/chat-bubble-dots.svg" style="height: 22px;"></span>
+</div>
+{% endif %}
+<ul class="dropdown-menu dropdown-menu dropdown-menu-lg-right institucional-bg" role="menu">
+{% if is_granted('ROLE_TECNICO') %}
+    {% for orden in ordenes %}
+        <li class="text-black-50"><a class="dropdown-item item-sm" href="{{ path('orden_reparacion_new', { 'id' : orden.id }) }}">{{ orden.fechaEntrada | date('d-m-Y h:i:s a') }} - {{ orden.nroOrden }} - Revisión de {{ orden.datosEquipo }}</span></a></li>
+    {% else %}
+        <li>No hay trabajos pendientes</li>
+    {% endfor %}
+{% elseif is_granted('ROLE_RECEPCIONISTA') %}
+    {% for orden in ordenes %}
+        <li class="text-black-50"><a class="dropdown-item item-sm" href="{{ path('orden_trabajo_show', { 'id' : orden.id }) }}">{{ orden.fechaEntrada | date('d-m-Y h:i:s a') }} - {{ orden.nroOrden }} - Revisión de {{ orden.datosEquipo }} - {{ orden.estado | traducirSiglas }}</span></a></li>
+    {% else %}
+        <li>No hay trabajos pendientes</li>
+    {% endfor %}
+{% endif %}
+</ul>

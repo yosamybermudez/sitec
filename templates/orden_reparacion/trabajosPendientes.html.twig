@@ -1,0 +1,45 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : 'Trabajos pendientes',
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+<div class="white">
+    <table id="datos-multi-select-all" class="table table-xs">
+        <thead>
+            <tr>
+                <th>No. Orden</th>
+                <th>Nombre(s) y Apellidos / Carné identidad / Télefono (Cliente)</th>
+                <th>Fecha de entrada</th>
+                <th>Equipo</th>
+                <th>Motivo visita</th>
+                <th>Estado</th>
+                <th data-orderable="false"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for orden_trabajo in orden_trabajos %}
+            <tr>
+                <td>{{ orden_trabajo.nroOrden }}</td>
+                <td>{{ orden_trabajo.clienteNombreCompleto }} / {{ orden_trabajo.clienteCarneIdentidad }} / {{ orden_trabajo.clienteTelefonosContacto }}</td>
+                <td>{{ orden_trabajo.fechaEntrada ? orden_trabajo.fechaEntrada|date('d-m-Y') : '' }}</td>
+                <td>{{ orden_trabajo.equipoTipo.nombre }} / {{ orden_trabajo.equipoMarca }} {{ orden_trabajo.equipoModelo }}</td>
+                <td>{{ orden_trabajo.motivoVisita }}</td>
+                <td>{{ orden_trabajo.estado | traducirSiglas }}</td>
+                <td>
+                {% if not orden_trabajo.dictamenTecnico %}
+                    <a class="btn btn-primary btn-sm"
+                       href="">Dictaminar
+                    </a>
+                {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{{ include('_mdb/mdb_index_delete_modal.html.twig') }}
+{% endblock %}

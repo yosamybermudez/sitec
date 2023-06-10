@@ -1,0 +1,28 @@
+{% extends '_mdb/mdb_base.html.twig' %}
+
+{% block pagetop_fluid %}
+    {{ include ("_mdb/mdb_page_top_section.html.twig", {
+        'title' : title
+    }) }}
+{% endblock %}
+
+{% block body_fluid %}
+    <div class="white" style="text-align: justify;">
+        <div class="row mb-3">
+            <div class="col-12">
+                {{ texto }}
+            </div>
+        </div>
+        <div class="row">
+            {% if app.session.get('modulo') == 'taller' %}
+                {{ include('app_module/moduloTaller.html.twig') }}
+            {% elseif app.session.get('modulo') == 'inventario' %}
+                {{ include('app_module/moduloInventario.html.twig') }}
+            {% elseif app.session.get('modulo') == 'sistema' %}
+                {{ include('app_module/moduloSistema.html.twig') }}
+            {% elseif app.session.get('modulo') == 'avanzado' %}
+                {{ include('app_module/moduloSistemaAvanzado.html.twig') }}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

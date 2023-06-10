@@ -1,0 +1,26 @@
+{% if is_granted('ROLE_ADMINISTRADOR_NEGOCIO') %}
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('sistema_mostrar_rutas') }}">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/load-balancer.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Rutas del sistema</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 mb-3">
+        <a href="{{ path('sistema_clean_cache') }}" onclick="return confirm('¿Está seguro de la acción a realizar?');">
+            <div class="card bg-primary text-white">
+                <div class="card-header">
+                    <img class="svg svg-invert" src="{{ asset('assets/zondicons/trash.svg') }}">
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">Limpiar cache</h5>
+                </div>
+            </div>
+        </a>
+    </div>
+{% endif %}
